@@ -29,81 +29,87 @@ class WPApps {
     var $dbtable = 'wpapps';
     var $plugin_version = '1.0';
     var $tpls;
+    var $options;
 
     public function __construct() {
-        require_once(dirname(__FILE__)."./templates.php");
-        $this->tpls = new WPAppsTemplates();
-
-/*            add_filter('query_vars', function($qvar) {
-                die;
-                $qvar[] = "adm_filter";
-                return $qvar;
-            }, 10,1);*/
-
-        if (is_admin()) {
-
-
-            // Add admin menu hook
-            add_action('admin_menu', function() {
-                add_menu_page("Apps", "Apps", "edit_others_posts"/*capability*/, "wpapps", array(&$this, "admin_wpapps"), null, '30.'.M_PI);
-            });
-        }
-    }
-
-/*    function WPApps() {
         global $wpdb;
-
         define('IN_WPAPPS', 1);
+        $this->dbtable = $wpdb->prefix . $this->dbtable;
+        $this->get_options();
+        $this->create_update_db_table();
 
+        //debug
         restore_error_handler();
         error_reporting(E_ALL);
         ini_set('error_reporting', E_ALL);
         ini_set('html_errors',TRUE);
         ini_set('display_errors',TRUE);
 
-        $this->dbtable = $wpdb->prefix . $this->dbtable;
+
+        if (is_admin()) {
+            // Add admin menu hook
+            add_action('admin_menu', function() {
+                add_menu_page("Apps4X", "Apps4X", "edit_others_posts", "wpapps", array(&$this, "page_overview"), null, (string)(27+M_PI)); // rule of pi
+                add_submenu_page("wpapps", "Overview", "Overview", "edit_others_posts", "wpapps", array(&$this, "page_overview")); // overwrite menu title
+                add_submenu_page("wpapps", "Cocreation events", "Events", "edit_others_posts", "wpapps_events", array(&$this, "page_events"));
+                add_submenu_page("wpapps", "App concept ideas", "Ideas", "edit_others_posts", "wpapps_ideas", array(&$this, "page_ideas"))
+            });
 
 
-        
-    }*/
+            // Add admin css
+            add_action('admin_init', function() {
+                wp_register_style('wpapps-admin', $this->getpluginurl().'wpapps-admin.css' , array(), $this->plugin_version);  
+                wp_enqueue_style('wpapps-admin');
+            });
+        }
+    }
 
     function admin_wpapps() {
         global $wpdb, $wp_query;
 
-
-/*        $counts = $wpdb->get_row("SELECT 
+        $counts = $wpdb->get_row("SELECT 
             (SELECT COUNT(*) FROM {$this->dbtable}_events) AS events_all,
             (SELECT COUNT(*) FROM {$this->dbtable}_ideas) AS ideas_all,
             (SELECT COUNT(*) FROM {$this->dbtable}_ideas WHERE published = 0) AS ideas_pending
-        ");*/
-
-        // $counts->events_all
-        // $counts->ideas_all
+        ");
 
         $statuses = ["All events", /*"All ideas",*/ "Pending ideas"];
-        $filter_idx = isset($statuses[(int)@$_GET['adm_filter']]) ? (int)$_GET['adm_filter'] : 0;
+        $filter_idx = @$statuses[$_GET['adm_filter']] ? (int)$_GET['adm_filter'] : 0;
 
-        ?>
-        <div class="wrap">
-            <div class="icon32" id="icon-edit-comments"><br /></div>
-            <h2>Apps - <?=$statuses[$filter_idx]?></h2>
+        require_once(dirname(__FILE__)."/events_overview.tbl.php");
+        $testListTable = new WPApps_EventsOverviewTable();
+        $testListTable->prepare_items();
 
-            <ul class="subsubsub">
-                <li class="all"><a <?php if (!$filter_idx) { echo 'class="current"'; } ?> href="?page=wpapps">All events</a>
-                    <span class="count">(<span class="pending-count"><?=$counts->events_all?></span>)</span></a> |
-                </li>
-                <li class="moderated"><a <?php if ($filter_idx == 1) { echo 'class="current"'; } ?> href="?page=wpapps&amp;adm_filter=1">Pending 
-                    <span class="count">(<span class="pending-count"><?=$counts->ideas_pending?></span>)</span></a> |
-                </li>
-            </ul>
-        <?php
-
-        //eval($this->get_template_eval("admin")); // eval is evil
+        include(dirname(__FILE__).'/events_overview.tpl.php');
     }
 
-/*    function get_template_eval($what) {
-        return 'echo <<<HTML'.PHP_EOL.$this->tpls->$what.PHP_EOL.'HTML;'.PHP_EOL;
-    }*/
+    function admin_wpapps_events() {
+        global $wpdb;
+
+        
+    }
+
+    function create_update_db_table() {
+        if ($this->options['plugin_version'] == $this->plugin_version) return;
+
+        require_once( ABSPATH . '/wp-admin/includes/upgrade.php');
+
+        $sqltext = file_get_contents(dirname(__FILE__)."/wpapps.sql");
+        $sqleval = eval('return <<<SQL'.PHP_EOL.$sqltext.PHP_EOL.'SQL;'.PHP_EOL); // eval is evil
+
+        $this->options["plugin_version"] = $this->plugin_version;
+        update_option("wpapps_options", $this->options);
+
+        dbDelta($sqleval);
+    }
+
+    function get_options() {
+        $defaults = [
+            "plugin_version" => 0
+        ];
+
+        $this->options = get_option("wpapps_options", $defaults);
+    }
 
     // from WPCR
 
@@ -115,6 +121,4 @@ class WPApps {
 if (!defined('IN_WPAPPS')) {
     global $WPApps;
     $WPApps = new WPApps();
-    register_activation_hook(__FILE__, array(&$WPApps, 'activate'));
-    register_deactivation_hook(__FILE__, array(&$WPApps, 'deactivate'));
 }
