@@ -47,12 +47,13 @@ class WPApps {
 
 
         if (is_admin()) {
+
             // Add admin menu hook
             add_action('admin_menu', function() {
                 add_menu_page("Apps4X", "Apps4X", "edit_others_posts", "wpapps", array(&$this, "page_overview"), null, (string)(27+M_PI)); // rule of pi
                 add_submenu_page("wpapps", "Overview", "Overview", "edit_others_posts", "wpapps", array(&$this, "page_overview")); // overwrite menu title
                 add_submenu_page("wpapps", "Cocreation events", "Events", "edit_others_posts", "wpapps_events", array(&$this, "page_events"));
-                add_submenu_page("wpapps", "App concept ideas", "Ideas", "edit_others_posts", "wpapps_ideas", array(&$this, "page_ideas"))
+                add_submenu_page("wpapps", "App concept ideas", "Ideas", "edit_others_posts", "wpapps_ideas", array(&$this, "page_ideas"));
             });
 
 
@@ -64,7 +65,7 @@ class WPApps {
         }
     }
 
-    function admin_wpapps() {
+    function page_overview() {
         global $wpdb, $wp_query;
 
         $counts = $wpdb->get_row("SELECT 
@@ -83,10 +84,18 @@ class WPApps {
         include(dirname(__FILE__).'/events_overview.tpl.php');
     }
 
-    function admin_wpapps_events() {
+    function page_events() {
         global $wpdb;
 
-        
+        $counts = $wpdb->get_row("SELECT
+            (SELECT COUNT(*) FROM {$this->dbtable}_events) AS events_all
+        ");
+
+        require_once(dirname(__FILE__)."/page_events.tbl.php");
+        $eventsTable = new WPApps_EventsOverviewTable();
+        $eventsTable->prepare_items();
+
+        include(dirname(__FILE__).'/page_events.tpl.php');
     }
 
     function create_update_db_table() {
