@@ -56,7 +56,6 @@ class WPApps {
                 add_submenu_page("wpapps", "App concept ideas", "Ideas", "edit_others_posts", "wpapps_ideas", array(&$this, "page_ideas"));
             });
 
-
             // Add admin css
             add_action('admin_init', function() {
                 wp_register_style('wpapps-admin', $this->getpluginurl().'wpapps-admin.css' , array(), $this->plugin_version);
@@ -68,34 +67,41 @@ class WPApps {
     function page_overview() {
         global $wpdb, $wp_query;
 
-        $counts = $wpdb->get_row("SELECT
-            (SELECT COUNT(*) FROM {$this->dbtable}_events) AS events_all,
-            (SELECT COUNT(*) FROM {$this->dbtable}_ideas) AS ideas_all,
-            (SELECT COUNT(*) FROM {$this->dbtable}_ideas WHERE published = 0) AS ideas_pending
-        ");
 
-        $statuses = ["All events", /*"All ideas",*/ "Pending ideas"];
-        $filter_idx = @$statuses[$_GET['adm_filter']] ? (int)$_GET['adm_filter'] : 0;
-
-        require_once(dirname(__FILE__)."/events_overview.tbl.php");
-        $testListTable = new WPApps_EventsOverviewTable();
-        $testListTable->prepare_items();
-
-        include(dirname(__FILE__).'/events_overview.tpl.php');
+//        $counts = $wpdb->get_row("SELECT
+//            (SELECT COUNT(*) FROM {$this->dbtable}_events) AS events_all,
+//            (SELECT COUNT(*) FROM {$this->dbtable}_ideas) AS ideas_all,
+//            (SELECT COUNT(*) FROM {$this->dbtable}_ideas WHERE published = 0) AS ideas_pending
+//        ");
+//
+//        $statuses = ["All events", /*"All ideas",*/ "Pending ideas"];
+//        $filter_idx = @$statuses[$_GET['adm_filter']] ? (int)$_GET['adm_filter'] : 0;
+//
+//        require_once(dirname(__FILE__)."/events_overview.tbl.php");
+//        $testListTable = new WPApps_EventsOverviewTable();
+//        $testListTable->prepare_items();
+//
+//        include(dirname(__FILE__).'/events_overview.tpl.php');
     }
 
     function page_events() {
         global $wpdb;
 
-        $counts = $wpdb->get_row("SELECT
-            (SELECT COUNT(*) FROM {$this->dbtable}_events) AS events_all
-        ");
+        if (@$_GET["action"] == "add") {
 
-        require_once(dirname(__FILE__)."/page_events.tbl.php");
-        $eventsTable = new WPApps_EventsOverviewTable();
-        $eventsTable->prepare_items();
+        } else {
 
-        include(dirname(__FILE__).'/page_events.tpl.php');
+            // leave room for other possible count(*)'s
+            $counts = $wpdb->get_row("SELECT
+                (SELECT COUNT(*) FROM {$this->dbtable}_events) AS events_all
+            ");
+
+            require_once(dirname(__FILE__)."/page_events.tbl.php");
+            $eventsTable = new WPApps_EventsTable($this);
+            $eventsTable->prepare_items();
+
+            include(dirname(__FILE__).'/page_events.tpl.php');
+        }
     }
 
     function create_update_db_table() {

@@ -1,5 +1,5 @@
 CREATE TABLE {$this->dbtable}_events (
-  `event_id` INT NOT NULL ,
+  `event_id` INT NOT NULL AUTO_INCREMENT,
   `title` VARCHAR(255) NULL ,
   `short_title` VARCHAR(255) NULL ,
   `where_location` VARCHAR(255) NULL ,
