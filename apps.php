@@ -25,16 +25,24 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
+defined('ABSPATH') || exit;
+
 class WPApps {
-    var $dbtable = 'wpapps';
-    var $plugin_version = '1.0';
+    const WPAPPS_VERSION = '1.0';
+    const WPAPPS_DBTABLE = 'wpapps';
+
+    var $dbtable;
     var $tpls;
     var $options;
 
     public function __construct() {
         global $wpdb;
+
         define('IN_WPAPPS', 1);
-        $this->dbtable = $wpdb->prefix . $this->dbtable;
+        define('WPAPPS_URL', plugin_dir_url(__FILE__));
+        define('WPAPPS_PATH', plugin_dir_path(__FILE__));
+
+        $this->dbtable = $wpdb->prefix . self::WPAPPS_DBTABLE;
         $this->get_options();
         $this->create_update_db_table();
 
@@ -46,21 +54,59 @@ class WPApps {
         ini_set('display_errors',TRUE);
 
 
-        if (is_admin()) {
+        if (is_admin()) { // backend
+            add_action('init', function() {
 
-            // Add admin menu hook
-            add_action('admin_menu', function() {
-                add_menu_page("Apps4X", "Apps4X", "edit_others_posts", "wpapps", array(&$this, "page_overview"), null, (string)(27+M_PI)); // rule of pi
-                add_submenu_page("wpapps", "Overview", "Overview", "edit_others_posts", "wpapps", array(&$this, "page_overview")); // overwrite menu title
-                add_submenu_page("wpapps", "Cocreation events", "Events", "edit_others_posts", "wpapps_events", array(&$this, "page_events"));
-                add_submenu_page("wpapps", "App concept ideas", "Ideas", "edit_others_posts", "wpapps_ideas", array(&$this, "page_ideas"));
+                $labels = array(
+                    'menu_name' => "teeest",
+                    'name' => _x('Events', 'post type general name'),
+                    'singular_name' => _x('Portfolio Item', 'post type singular name'),
+                    'add_new' => _x('Add New', 'portfolio item'),
+                    'add_new_item' => __('Add New Portfolio Item'),
+                    'edit_item' => __('Edit Portfolio Item'),
+                    'new_item' => __('New Portfolio Item'),
+                    'view_item' => __('View Portfolio Item'),
+                    'search_items' => __('Search Portfolio'),
+                    'not_found' =>  __('Nothing found'),
+                    'not_found_in_trash' => __('Nothing found in Trash'),
+                    'parent_item_colon' => ''
+                );
+
+                $args = array(
+                    'labels' => $labels,
+                    'public' => true,
+                    'publicly_queryable' => true,
+                    'show_ui' => true,
+                    'query_var' => true,
+                    //'menu_icon' => get_stylesheet_directory_uri() . '/article16.png',
+                    'menu_name' => "Apps4X",
+                    'rewrite' => true,
+                    'capability_type' => 'post',
+                    'hierarchical' => false,
+                    'menu_position' => null,
+                    'supports' => array('title','editor','thumbnail')
+                );
+
+                register_post_type( 'portfolio' , $args );
             });
+//
+//            // Add admin menu hook
+//            add_action('admin_menu', function() {
+//                add_menu_page("Apps4X", "Apps4X", "edit_others_posts", "wpapps", array(&$this, "page_overview"), null, (string)(27+M_PI)); // rule of pi
+//                add_submenu_page("wpapps", "Overview", "Overview", "edit_others_posts", "wpapps", array(&$this, "page_overview")); // overwrite menu title
+//                add_submenu_page("wpapps", "Cocreation events", "Events", "edit_others_posts", "wpapps_events", array(&$this, "page_events"));
+//                add_submenu_page("wpapps", "App concept ideas", "Ideas", "edit_others_posts", "wpapps_ideas", array(&$this, "page_ideas"));
+//            });
 
             // Add admin css
             add_action('admin_init', function() {
-                wp_register_style('wpapps-admin', $this->getpluginurl().'wpapps-admin.css' , array(), $this->plugin_version);
+                wp_register_style('wpapps-admin', WPAPPS_URL . '/wpapps-admin.css' , array(),  self::WPAPPS_VERSION);
                 wp_enqueue_style('wpapps-admin');
             });
+        }
+        else { // frontend
+            wp_register_style('wpapps', WPAPPS_URL.'/wpapps.css');
+            wp_enqueue_style( 'wpapps');
         }
     }
 
@@ -105,14 +151,14 @@ class WPApps {
     }
 
     function create_update_db_table() {
-        if ($this->options['plugin_version'] == $this->plugin_version) return;
+        if ($this->options['plugin_version'] == self::WPAPPS_VERSION) return;
 
         require_once( ABSPATH . '/wp-admin/includes/upgrade.php');
 
         $sqltext = file_get_contents(dirname(__FILE__)."/wpapps.sql");
         $sqleval = eval('return <<<SQL'.PHP_EOL.$sqltext.PHP_EOL.'SQL;'.PHP_EOL); // eval is evil
 
-        $this->options["plugin_version"] = $this->plugin_version;
+        $this->options["plugin_version"] =  self::WPAPPS_VERSION;
         update_option("wpapps_options", $this->options);
 
         dbDelta($sqleval);
@@ -125,15 +171,6 @@ class WPApps {
 
         $this->options = get_option("wpapps_options", $defaults);
     }
-
-    // from WPCR
-
-    function getpluginurl() {
-        return trailingslashit(plugins_url(basename(dirname(__FILE__))));
-    }
 }
 
-if (!defined('IN_WPAPPS')) {
-    global $WPApps;
-    $WPApps = new WPApps();
-}
+$WPApps = new WPApps();
