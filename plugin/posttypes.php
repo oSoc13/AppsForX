@@ -26,6 +26,9 @@ class WPApps_Posttypes {
         $this->main = $main;
 
         add_action('init', [$this, "register_event"]);
+
+        add_action("manage_event_posts_custom_column", [$this, 'custom_event_column'], 10, 2);
+        add_filter('manage_event_posts_columns' , [$this, 'custom_event_columns']);
     }
 
     function register_event() {
@@ -57,4 +60,20 @@ class WPApps_Posttypes {
             'supports' => array( 'title', 'editor', 'comments' )
         ));
     }
+
+    // set browsable event fields, handle display
+    function custom_event_columns($columns) {
+        unset($columns["date"]);
+        $columns['when'] = "When";
+        return $columns;
+    }
+
+    function custom_event_column($column, $post_id) {
+        switch ($column) {
+            case "when":
+                echo date('d M Y - H:i', get_post_meta($post_id, 'when_start', true));
+                break;
+        }
+    }
+
 }

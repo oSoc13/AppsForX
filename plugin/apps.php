@@ -36,7 +36,7 @@ class WPApps {
     // classvars
     var $database, $posttypes, $metaboxes;
 
-    public function __construct() {
+    function __construct() {
         global $wpdb;
 
         define('IN_WPAPPS', 1);
