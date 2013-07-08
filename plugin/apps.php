@@ -43,6 +43,11 @@ class WPApps {
         define('WPAPPS_URL', plugin_dir_url(__FILE__));
         define('WPAPPS_PATH', plugin_dir_path(__FILE__));
 
+        if (!defined('CMB_PATH'))
+            require_once WPAPPS_PATH . '/cmb/custom-meta-boxes.php';
+
+        require_once WPAPPS_PATH . '/cmb/example-functions.php';
+
         $this->dbtable = $wpdb->prefix . self::WPAPPS_DBTABLE;
         $this->get_options();
         $this->create_update_db_table();
@@ -71,7 +76,6 @@ class WPApps {
                     'parent_item_colon' => '',
                     'menu_name' => 'Events'
                 ),
-                'menu_icon' => WPAPPS_PATH . "/events_icon.png",
                 'public' => true,
                 'publicly_queryable' => true,
                 'show_ui' => true,
@@ -83,24 +87,30 @@ class WPApps {
                 'hierarchical' => false,
                 'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' )
             ));
-        });
 
-        add_action('add_meta_boxes', function() {
-            function product_price_box_content( $post ) {
-                wp_nonce_field( plugin_basename( __FILE__ ), 'product_price_box_content_nonce' );
-                echo '';
-                echo '';
+            if (!class_exists('cmb_Meta_Box')) {
+                require_once WPAPPS_PATH . '/cmb/init.php';
             }
-
-            add_meta_box(
-                'event_meta_box',
-                __( 'Product Price', 'myplugin_textdomain' ),
-                'product_price_box_content',
-                'event',
-                'side',
-                'high'
-            );
         });
+
+        require_once WPAPPS_PATH . '/metaboxes.php';
+
+//        add_action('add_meta_boxes', function() {
+//            function product_price_box_content( $post ) {
+//                wp_nonce_field( plugin_basename( __FILE__ ), 'product_price_box_content_nonce' );
+//                echo 'haiu';
+//                echo '';
+//            }
+//
+//            add_meta_box(
+//                'event_meta_box',
+//                __( 'Product Price', 'myplugin_textdomain' ),
+//                'product_price_box_content',
+//                'event',
+//                'side',
+//                'high'
+//            );
+//        });
 
         if (is_admin()) { // backend
             // Add admin menu hook
@@ -109,7 +119,7 @@ class WPApps {
             // not sure if this is the correct action to hook into, but it seems to work
             add_action('admin_head', function() {
                 global $submenu_file, $parent_file;
-                if (@$_GET["post_type"] == "event" || get_post_type(get_the_ID()) == "event") {
+                if (@$_GET["post_type"] == "event" || (get_post() && get_post_type(get_the_ID()) == "event")) {
                     $parent_file = "wpapps";
                     $submenu_file = "edit.php?post_type=event";
                 }
@@ -178,20 +188,6 @@ class WPApps {
 
             include(dirname(__FILE__).'/page_events.tpl.php');
         }
-    }
-
-    function create_update_db_table() {
-        if ($this->options['plugin_version'] == self::WPAPPS_VERSION) return;
-
-        require_once( ABSPATH . '/wp-admin/includes/upgrade.php');
-
-        $sqltext = file_get_contents(dirname(__FILE__)."/wpapps.sql");
-        $sqleval = eval('return <<<SQL'.PHP_EOL.$sqltext.PHP_EOL.'SQL;'.PHP_EOL); // eval is evil
-
-        $this->options["plugin_version"] =  self::WPAPPS_VERSION;
-        update_option("wpapps_options", $this->options);
-
-        dbDelta($sqleval);
     }
 
     function get_options() {
