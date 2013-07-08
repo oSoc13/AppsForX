@@ -1,0 +1,8 @@
+.wpapps_show { display: block; }
+.wpapps_hide { display: none; }
+
+.row-actions span { display: inline;}
+
+#icon-wpapps {
+    background-image: url(events_icon.png);
+}

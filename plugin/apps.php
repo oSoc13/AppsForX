@@ -9,7 +9,8 @@
  * Author URI: http://ce3c.be
  * License: Other
 
- * Copyright: 2013 open Summer of code / OKFN Belgium
+ * Copyright: OKFN Belgium (some rights reserved)
+ * License: GPL2
 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License, version 2, as 
@@ -53,50 +54,75 @@ class WPApps {
         ini_set('html_errors',TRUE);
         ini_set('display_errors',TRUE);
 
+        add_action('init', function() {
+            register_post_type("event", array(
+                'labels' => array(
+                    'name' => 'Events',
+                    'singular_name' => 'Event',
+                    'add_new' => 'Add New',
+                    'add_new_item' => 'Add New Event',
+                    'edit_item' => 'Edit Event',
+                    'new_item' => 'New Event',
+                    'all_items' => 'Events',
+                    'view_item' => 'View Event',
+                    'search_items' => 'Search Events',
+                    'not_found' =>  'No events found',
+                    'not_found_in_trash' => 'No events found in Trash',
+                    'parent_item_colon' => '',
+                    'menu_name' => 'Events'
+                ),
+                'menu_icon' => WPAPPS_PATH . "/events_icon.png",
+                'public' => true,
+                'publicly_queryable' => true,
+                'show_ui' => true,
+                'show_in_menu' => false,
+                'query_var' => true,
+                'rewrite' => array( 'slug' => 'event' ),
+                'capability_type' => 'post',
+                'has_archive' => true,
+                'hierarchical' => false,
+                'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' )
+            ));
+        });
+
+        add_action('add_meta_boxes', function() {
+            function product_price_box_content( $post ) {
+                wp_nonce_field( plugin_basename( __FILE__ ), 'product_price_box_content_nonce' );
+                echo '';
+                echo '';
+            }
+
+            add_meta_box(
+                'event_meta_box',
+                __( 'Product Price', 'myplugin_textdomain' ),
+                'product_price_box_content',
+                'event',
+                'side',
+                'high'
+            );
+        });
 
         if (is_admin()) { // backend
-            add_action('init', function() {
+            // Add admin menu hook
 
-                $labels = array(
-                    'menu_name' => "teeest",
-                    'name' => _x('Events', 'post type general name'),
-                    'singular_name' => _x('Portfolio Item', 'post type singular name'),
-                    'add_new' => _x('Add New', 'portfolio item'),
-                    'add_new_item' => __('Add New Portfolio Item'),
-                    'edit_item' => __('Edit Portfolio Item'),
-                    'new_item' => __('New Portfolio Item'),
-                    'view_item' => __('View Portfolio Item'),
-                    'search_items' => __('Search Portfolio'),
-                    'not_found' =>  __('Nothing found'),
-                    'not_found_in_trash' => __('Nothing found in Trash'),
-                    'parent_item_colon' => ''
-                );
-
-                $args = array(
-                    'labels' => $labels,
-                    'public' => true,
-                    'publicly_queryable' => true,
-                    'show_ui' => true,
-                    'query_var' => true,
-                    //'menu_icon' => get_stylesheet_directory_uri() . '/article16.png',
-                    'menu_name' => "Apps4X",
-                    'rewrite' => true,
-                    'capability_type' => 'post',
-                    'hierarchical' => false,
-                    'menu_position' => null,
-                    'supports' => array('title','editor','thumbnail')
-                );
-
-                register_post_type( 'portfolio' , $args );
+            // maintain highlighting, the hard way
+            // not sure if this is the correct action to hook into, but it seems to work
+            add_action('admin_head', function() {
+                global $submenu_file, $parent_file;
+                if (@$_GET["post_type"] == "event" || get_post_type(get_the_ID()) == "event") {
+                    $parent_file = "wpapps";
+                    $submenu_file = "edit.php?post_type=event";
+                }
             });
-//
-//            // Add admin menu hook
-//            add_action('admin_menu', function() {
-//                add_menu_page("Apps4X", "Apps4X", "edit_others_posts", "wpapps", array(&$this, "page_overview"), null, (string)(27+M_PI)); // rule of pi
-//                add_submenu_page("wpapps", "Overview", "Overview", "edit_others_posts", "wpapps", array(&$this, "page_overview")); // overwrite menu title
-//                add_submenu_page("wpapps", "Cocreation events", "Events", "edit_others_posts", "wpapps_events", array(&$this, "page_events"));
-//                add_submenu_page("wpapps", "App concept ideas", "Ideas", "edit_others_posts", "wpapps_ideas", array(&$this, "page_ideas"));
-//            });
+
+            add_action('admin_menu', function() {
+                global $submenu;
+                add_menu_page("Apps4X", "Apps4X", "edit_others_posts", "wpapps", array(&$this, "page_overview"), null, (string)(27+M_PI)); // rule of pi
+
+                add_submenu_page("wpapps", "Overview", "Overview", "edit_others_posts", "wpapps", array(&$this, "page_overview")); // overwrite menu title
+                add_submenu_page("wpapps", "Events", "Events", "edit_others_posts", "edit.php?post_type=event");
+                add_submenu_page("wpapps", "App concept ideas", "Ideas", "edit_others_posts", "wpapps_ideas", array(&$this, "page_ideas"));
+            });
 
             // Add admin css
             add_action('admin_init', function() {
@@ -105,8 +131,10 @@ class WPApps {
             });
         }
         else { // frontend
-            wp_register_style('wpapps', WPAPPS_URL.'/wpapps.css');
-            wp_enqueue_style( 'wpapps');
+            add_action('wp_print_styles', function() {
+                wp_register_style('wpapps', WPAPPS_URL.'/wpapps.css');
+                wp_enqueue_style('wpapps');
+            });
         }
     }
 
@@ -131,7 +159,9 @@ class WPApps {
     }
 
     function page_events() {
-        global $wpdb;
+        global $wpdb, $submenu_file;
+
+
 
         if (@$_GET["action"] == "add") {
 
