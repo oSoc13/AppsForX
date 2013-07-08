@@ -29,39 +29,77 @@ class WPApps_Metaboxes {
         if (!defined('CMB_PATH'))
             require_once WPAPPS_PATH . "/cmb/custom-meta-boxes.php";
 
-
 //        add_action('load-post-new.php', ''
 //        add_action('load-post.php',
 
-        add_action('add_meta_boxes', array(&$this, 'add_meta_box'));
-        add_action('post_updated', array(&$this, 'save'));
+        add_action('add_meta_boxes', [$this, 'add_meta_box']);
+        add_action('post_updated', [$this, 'save']);
+
+        add_filter('cmb_meta_boxes', [$this, 'add_event_metaboxes']);
 
 
+
+
+        // browse action/filter tests
+        function event_cpt_columns($columns) {
+            unset($columns["date"]);
+            $new_columns = array(
+                'when' => "When",
+            );
+            return array_merge($columns, $new_columns);
+        }
+
+        function custom_columns($column, $post_id) {
+            switch ($column) {
+                case "when":
+                    echo date('d M Y - H:i', get_post_meta($post_id, 'when_start', true));
+                    break;
+            }
+        }
+
+        add_action("manage_event_posts_custom_column", "custom_columns", 10, 2);
+        add_filter('manage_event_posts_columns' , 'event_cpt_columns');
+    }
+
+    public function add_event_metaboxes($meta_boxes) {
+        $meta_boxes[] = array(
+            'title' => 'Information',
+            'pages' => 'event',
+            'fields' => [
+                ['id' => 'field-12', 'name' => 'Event Logo', 'type' => 'image', 'repeatable' => false],
+                ['id' => 'when_start', 'name' => 'Event Start', 'type' => 'datetime_unix'],
+                ['id' => 'when_end', 'name' => 'Event End', 'type' => 'datetime_unix'],
+                ['id' => 'field-20', 'name' => 'Event Location', 'type' => 'textarea']
+            ],
+            'context' => 'side',
+            'priority' => 'high'
+        );
+        return $meta_boxes;
     }
 
     public function add_meta_box() {
         global $wp_meta_boxes;
 
-        remove_meta_box('postimagediv', 'event', 'normal');
-        add_meta_box('postimagediv', __('Event logo', 'blaaabla'), 'post_thumbnail_meta_box', 'event', 'side', 'high');
+//        remove_meta_box('postimagediv', 'event', 'side');
+//        add_meta_box('postimagediv', __('Event logo', 'blaaabla'), 'post_thumbnail_meta_box', 'event', 'side', 'high');
 
-        add_meta_box(
-            'some_meta_box_name'
-            ,__( 'Some Meta Box Headline', "bla" )
-            ,array( &$this, 'render_meta_box_content' )
-            ,'event'
-            ,'advanced'
-            ,'high'
-        );
-
-        add_meta_box(
-            'some_meta_box_name_2'
-            ,__( 'Some Meta Box Headline2', "blbabababaa" )
-            ,array( &$this, 'render_meta_box_content' )
-            ,'event'
-            ,'side'
-            ,'high'
-        );
+//        add_meta_box(
+//            'some_meta_box_name'
+//            ,__( 'Some Meta Box Headline', "bla" )
+//            ,array( &$this, 'render_meta_box_content' )
+//            ,'event'
+//            ,'advanced'
+//            ,'high'
+//        );
+//
+//        add_meta_box(
+//            'some_meta_box_name_2'
+//            ,__( 'Some Meta Box Headline2', "blbabababaa" )
+//            ,array( &$this, 'render_meta_box_content' )
+//            ,'event'
+//            ,'side'
+//            ,'high'
+//        );
 
     }
 

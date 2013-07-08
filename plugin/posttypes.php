@@ -25,7 +25,7 @@ class WPApps_Posttypes {
     function __construct($main) {
         $this->main = $main;
 
-        add_action('init', array(&$this, "register_event"));
+        add_action('init', [$this, "register_event"]);
     }
 
     function register_event() {
@@ -54,7 +54,7 @@ class WPApps_Posttypes {
             'capability_type' => 'post',
             'has_archive' => true,
             'hierarchical' => false,
-            'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' )
+            'supports' => array( 'title', 'editor', 'comments' )
         ));
     }
 }

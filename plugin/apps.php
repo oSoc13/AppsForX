@@ -34,7 +34,7 @@ class WPApps {
     // setvars
     var $dbtable, $options;
     // classvars
-    var $database, $posttypes;
+    var $database, $posttypes, $metaboxes;
 
     public function __construct() {
         global $wpdb;
@@ -55,18 +55,18 @@ class WPApps {
 
         $this->database = new WPApps_Database($this);
         $this->posttypes = new WPApps_Posttypes($this);
-        new WPApps_Metaboxes($this);
+        $this->metaboxes = new WPApps_Metaboxes($this);
 
         $this->setup_hooks();
     }
 
+    function page_overview() {}
     function page_events() { // ToDo: separate
         global $wpdb, $submenu_file;
 
         if (@$_GET["action"] == "add") {
 
         } else {
-
             // leave room for other possible count(*)'s
             $counts = $wpdb->get_row("SELECT
                 (SELECT COUNT(*) FROM {$this->dbtable}_events) AS events_all
@@ -95,17 +95,16 @@ class WPApps {
             });
 
             add_action('admin_menu', function() {
-                global $submenu;
-                add_menu_page("Apps4X", "Apps4X", "edit_others_posts", "wpapps", array(&$this, "page_overview"), null, (string)(27+M_PI)); // rule of pi
+                add_menu_page("Apps4X", "Apps4X", "edit_others_posts", "wpapps", [$this, "page_overview"], null, (string)(27+M_PI)); // rule of pi
 
-                add_submenu_page("wpapps", "Overview", "Overview", "edit_others_posts", "wpapps", array(&$this, "page_overview")); // overwrite menu title
+                add_submenu_page("wpapps", "Overview", "Overview", "edit_others_posts", "wpapps", [$this, "page_overview"]); // overwrite menu title
                 add_submenu_page("wpapps", "Events", "Events", "edit_others_posts", "edit.php?post_type=event");
-                add_submenu_page("wpapps", "App concept ideas", "Ideas", "edit_others_posts", "wpapps_ideas", array(&$this, "page_ideas"));
+                add_submenu_page("wpapps", "App concept ideas", "Ideas", "edit_others_posts", "wpapps_ideas", [$this, "page_ideas"]);
             });
 
             // Add admin css
             add_action('admin_init', function() {
-                wp_register_style('wpapps-admin', WPAPPS_URL . '/wpapps-admin.css' , array(),  self::WPAPPS_VERSION);
+                wp_register_style('wpapps-admin', WPAPPS_URL . '/wpapps-admin.css', [],  self::WPAPPS_VERSION);
                 wp_enqueue_style('wpapps-admin');
             });
         }
