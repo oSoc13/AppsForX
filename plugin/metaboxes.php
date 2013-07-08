@@ -1,20 +1,42 @@
 <?php
 
-defined('ABSPATH') || exit;
+/*
+ * Author: Cedric Van Bockhaven
+ * Copyright: OKFN Belgium (some rights reserved)
+ * License: GPL2
 
-if (is_admin()) {
-    function load_meta_boxes() {
-        return new AppsMetaboxes();
-    }
-    add_action('load-post.php', 'load_meta_boxes');
-    add_action('load-post-new.php', 'load_meta_boxes');
-}
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License, version 2, as
+ * published by the Free Software Foundation.
 
-class AppsMetaboxes {
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
 
-    public function __construct() {
-        add_action('add_meta_boxes', array( $this, 'add_meta_box' ));
-        add_action('post_updated', array( $this, 'save' ));
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
+class WPApps_Metaboxes {
+    var $main;
+
+    public function __construct($main) {
+        $this->main = $main;
+
+        // Use nice custom meta boxes by HumanMade
+        if (!defined('CMB_PATH'))
+            require_once WPAPPS_PATH . "/cmb/custom-meta-boxes.php";
+
+
+//        add_action('load-post-new.php', ''
+//        add_action('load-post.php',
+
+        add_action('add_meta_boxes', array(&$this, 'add_meta_box'));
+        add_action('post_updated', array(&$this, 'save'));
+
+
     }
 
     public function add_meta_box() {
@@ -44,7 +66,6 @@ class AppsMetaboxes {
     }
 
     public function save( $post_id ) {
-        echo "huh";
         // Check permissions first
         if (('page' == @$_POST['post_type'] && ! current_user_can( 'edit_page', $post_id ) ) ||
             ( ! current_user_can( 'edit_post', $post_id ) ) ||

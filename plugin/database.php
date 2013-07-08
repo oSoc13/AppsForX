@@ -1,5 +1,24 @@
 <?php
 
+/*
+ * Author: Cedric Van Bockhaven
+ * Copyright: OKFN Belgium (some rights reserved)
+ * License: GPL2
+
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License, version 2, as
+ * published by the Free Software Foundation.
+
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+*/
+
 class WPApps_Database {
     var $main;
 
@@ -8,14 +27,13 @@ class WPApps_Database {
     }
 
     function compare_db_versions() {
-        if ($this->main->options['plugin_version'] == self::WPAPPS_VERSION)
+        if ($this->main->options['plugin_version'] == WPApps::WPAPPS_VERSION)
             return;
 
         require_once(ABSPATH . '/wp-admin/includes/upgrade.php');
-
         $this->crud_events_table();
 
-        $this->main->options["plugin_version"] =  self::WPAPPS_VERSION;
+        $this->main->options["plugin_version"] =  WPApps::WPAPPS_VERSION;
         update_option("wpapps_options", $this->main->options);
     }
 

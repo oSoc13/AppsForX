@@ -7,7 +7,6 @@
  * Version: 1.0
  * Author: Cedric Van Bockhaven
  * Author URI: http://ce3c.be
- * License: Other
 
  * Copyright: OKFN Belgium (some rights reserved)
  * License: GPL2
@@ -32,86 +31,56 @@ class WPApps {
     const WPAPPS_VERSION = '1.0';
     const WPAPPS_DBTABLE = 'wpapps';
 
-    var $dbtable;
-    var $tpls;
-    var $options;
+    // setvars
+    var $dbtable, $options;
+    // classvars
+    var $database, $posttypes;
 
     public function __construct() {
         global $wpdb;
 
         define('IN_WPAPPS', 1);
+        define('WPAPPS_DEBUG', true);
         define('WPAPPS_URL', plugin_dir_url(__FILE__));
         define('WPAPPS_PATH', plugin_dir_path(__FILE__));
 
-        if (!defined('CMB_PATH'))
-            require_once WPAPPS_PATH . '/cmb/custom-meta-boxes.php';
-
-        require_once WPAPPS_PATH . '/cmb/example-functions.php';
-
         $this->dbtable = $wpdb->prefix . self::WPAPPS_DBTABLE;
-        $this->get_options();
-        $this->create_update_db_table();
 
-        //debug
-        restore_error_handler();
-        error_reporting(E_ALL);
-        ini_set('error_reporting', E_ALL);
-        ini_set('html_errors',TRUE);
-        ini_set('display_errors',TRUE);
+        $this->setup_options();
+        $this->setup_debug();
 
-        add_action('init', function() {
-            register_post_type("event", array(
-                'labels' => array(
-                    'name' => 'Events',
-                    'singular_name' => 'Event',
-                    'add_new' => 'Add New',
-                    'add_new_item' => 'Add New Event',
-                    'edit_item' => 'Edit Event',
-                    'new_item' => 'New Event',
-                    'all_items' => 'Events',
-                    'view_item' => 'View Event',
-                    'search_items' => 'Search Events',
-                    'not_found' =>  'No events found',
-                    'not_found_in_trash' => 'No events found in Trash',
-                    'parent_item_colon' => '',
-                    'menu_name' => 'Events'
-                ),
-                'public' => true,
-                'publicly_queryable' => true,
-                'show_ui' => true,
-                'show_in_menu' => false,
-                'query_var' => true,
-                'rewrite' => array( 'slug' => 'event' ),
-                'capability_type' => 'post',
-                'has_archive' => true,
-                'hierarchical' => false,
-                'supports' => array( 'title', 'editor', 'author', 'thumbnail', 'excerpt', 'comments' )
-            ));
-
-            if (!class_exists('cmb_Meta_Box')) {
-                require_once WPAPPS_PATH . '/cmb/init.php';
-            }
-        });
-
+        require_once WPAPPS_PATH . '/database.php';
+        require_once WPAPPS_PATH . '/posttypes.php';
         require_once WPAPPS_PATH . '/metaboxes.php';
 
-//        add_action('add_meta_boxes', function() {
-//            function product_price_box_content( $post ) {
-//                wp_nonce_field( plugin_basename( __FILE__ ), 'product_price_box_content_nonce' );
-//                echo 'haiu';
-//                echo '';
-//            }
-//
-//            add_meta_box(
-//                'event_meta_box',
-//                __( 'Product Price', 'myplugin_textdomain' ),
-//                'product_price_box_content',
-//                'event',
-//                'side',
-//                'high'
-//            );
-//        });
+        $this->database = new WPApps_Database($this);
+        $this->posttypes = new WPApps_Posttypes($this);
+        new WPApps_Metaboxes($this);
 
+        $this->setup_hooks();
+    }
+
+    function page_events() { // ToDo: separate
+        global $wpdb, $submenu_file;
+
+        if (@$_GET["action"] == "add") {
+
+        } else {
+
+            // leave room for other possible count(*)'s
+            $counts = $wpdb->get_row("SELECT
+                (SELECT COUNT(*) FROM {$this->dbtable}_events) AS events_all
+            ");
+
+            require_once(dirname(__FILE__)."/page_events.tbl.php");
+            $eventsTable = new WPApps_EventsTable($this);
+            $eventsTable->prepare_items();
+
+            include(dirname(__FILE__).'/page_events.tpl.php');
+        }
+    }
+
+    function setup_hooks() {  // ToDo: separate?
         if (is_admin()) { // backend
             // Add admin menu hook
 
@@ -148,55 +117,21 @@ class WPApps {
         }
     }
 
-    function page_overview() {
-        global $wpdb, $wp_query;
-
-
-//        $counts = $wpdb->get_row("SELECT
-//            (SELECT COUNT(*) FROM {$this->dbtable}_events) AS events_all,
-//            (SELECT COUNT(*) FROM {$this->dbtable}_ideas) AS ideas_all,
-//            (SELECT COUNT(*) FROM {$this->dbtable}_ideas WHERE published = 0) AS ideas_pending
-//        ");
-//
-//        $statuses = ["All events", /*"All ideas",*/ "Pending ideas"];
-//        $filter_idx = @$statuses[$_GET['adm_filter']] ? (int)$_GET['adm_filter'] : 0;
-//
-//        require_once(dirname(__FILE__)."/events_overview.tbl.php");
-//        $testListTable = new WPApps_EventsOverviewTable();
-//        $testListTable->prepare_items();
-//
-//        include(dirname(__FILE__).'/events_overview.tpl.php');
-    }
-
-    function page_events() {
-        global $wpdb, $submenu_file;
-
-
-
-        if (@$_GET["action"] == "add") {
-
-        } else {
-
-            // leave room for other possible count(*)'s
-            $counts = $wpdb->get_row("SELECT
-                (SELECT COUNT(*) FROM {$this->dbtable}_events) AS events_all
-            ");
-
-            require_once(dirname(__FILE__)."/page_events.tbl.php");
-            $eventsTable = new WPApps_EventsTable($this);
-            $eventsTable->prepare_items();
-
-            include(dirname(__FILE__).'/page_events.tpl.php');
-        }
-    }
-
-    function get_options() {
+    function setup_options() {
         $defaults = [
             "plugin_version" => 0
         ];
 
         $this->options = get_option("wpapps_options", $defaults);
     }
+
+    function setup_debug() {
+        restore_error_handler();
+        error_reporting(E_ALL);
+        ini_set('error_reporting', E_ALL);
+        ini_set('html_errors',TRUE);
+        ini_set('display_errors',TRUE);
+    }
 }
 
-$WPApps = new WPApps();
+new WPApps;
