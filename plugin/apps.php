@@ -1,9 +1,9 @@
 <?php
 
 /*
- * Plugin Name: Apps
- * Plugin URI: http://wpapp
- * Description: Adding apps and ideas to a WordPress blog
+ * Plugin Name: Apps4X
+ * Plugin URI: https://github.com/oSoc13/AppsForX
+ * Description: Adding events, apps and ideas to a WordPress blog
  * Version: 1.0
  * Author: Cedric Van Bockhaven
  * Author URI: http://ce3c.be
@@ -46,6 +46,7 @@ class WPApps {
 
         $this->dbtable = $wpdb->prefix . self::WPAPPS_DBTABLE;
 
+        $this->setup_translations();
         $this->setup_options();
         $this->setup_debug();
 
@@ -88,7 +89,7 @@ class WPApps {
             // not sure if this is the correct action to hook into, but it seems to work
             add_action('admin_head', function() {
                 global $submenu_file, $parent_file;
-                if (@$_GET["post_type"] == "event" || (get_post() && get_post_type(get_the_ID()) == "event")) {
+                if (@$_REQUEST["post_type"] == "event" || (get_post() && get_post_type(get_the_ID()) == "event")) {
                     $parent_file = "wpapps";
                     $submenu_file = "edit.php?post_type=event";
                 }
@@ -116,7 +117,7 @@ class WPApps {
         }
     }
 
-    function setup_options() {
+    private function setup_options() {
         $defaults = [
             "plugin_version" => 0
         ];
@@ -124,12 +125,18 @@ class WPApps {
         $this->options = get_option("wpapps_options", $defaults);
     }
 
-    function setup_debug() {
+    private function setup_debug() {
         restore_error_handler();
         error_reporting(E_ALL);
         ini_set('error_reporting', E_ALL);
         ini_set('html_errors',TRUE);
         ini_set('display_errors',TRUE);
+    }
+
+    private function setup_translations() {
+        add_action('plugins_loaded', function() {
+            load_plugin_textdomain("wpapps", false, dirname(plugin_basename(__FILE__)) . "lang");
+        });
     }
 }
 

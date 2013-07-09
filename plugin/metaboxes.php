@@ -36,18 +36,26 @@ class WPApps_Metaboxes {
     }
 
     function add_event_metaboxes($meta_boxes) {
-        $meta_boxes[] = array(
+        $meta_boxes[] = [
             'title' => 'Information',
             'pages' => 'event',
             'fields' => [
                 ['id' => 'field-12', 'name' => 'Event Logo', 'type' => 'image', 'repeatable' => false],
                 ['id' => 'when_start', 'name' => 'Event Start', 'type' => 'datetime_unix'],
                 ['id' => 'when_end', 'name' => 'Event End', 'type' => 'datetime_unix'],
-                ['id' => 'field-20', 'name' => 'Event Location', 'type' => 'textarea']
+                ['id' => 'field-20', 'name' => 'Event Location', 'type' => 'textarea'],
+                ['id' => 'edition', 'name' => 'Edition', 'type' => 'text']
             ],
             'context' => 'side',
             'priority' => 'high'
-        );
+        ];
+        $meta_boxes[] = [
+            'title' => 'Jury',
+            'pages' => 'event',
+            'fields' => [
+                ['id' => 'field-13', 'name' => "Jurylid", 'type' => 'text', 'repeatable' => true]
+            ]
+        ];
         return $meta_boxes;
     }
 }

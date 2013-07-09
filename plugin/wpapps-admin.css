@@ -6,3 +6,5 @@
 #icon-wpapps {
     background-image: url(events_icon.png);
 }
+
+.current-image img { width: 150px; height: 150px;}
