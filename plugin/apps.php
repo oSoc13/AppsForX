@@ -23,6 +23,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ *
+ * Attributions: Event icon based on the icons by Designmodo, Creative Commons License
 */
 
 defined('ABSPATH') || exit;
@@ -97,7 +99,7 @@ class WPApps {
             });
 
             add_action('admin_menu', function() {
-                add_menu_page("Apps4X", "Apps4X", "edit_others_posts", "wpapps", [$this, "page_overview"], null, (string)(27+M_PI)); // rule of pi
+                add_menu_page("Apps4X", "Apps4X", "edit_others_posts", "wpapps", [$this, "page_overview"], WPAPPS_URL . "/style/calendar16.png", (string)(27+M_PI)); // rule of pi
 
                 add_submenu_page("wpapps", "Overview", "Overview", "edit_others_posts", "wpapps", [$this, "page_overview"]); // overwrite menu title
                 add_submenu_page("wpapps", "Events", "Events", "edit_others_posts", "edit.php?post_type=event");
@@ -106,13 +108,13 @@ class WPApps {
 
             // Add admin css
             add_action('admin_init', function() {
-                wp_register_style('wpapps-admin', WPAPPS_URL . '/wpapps-admin.css', [],  self::WPAPPS_VERSION);
+                wp_register_style('wpapps-admin', WPAPPS_URL . '/style/wpapps-admin.css', [],  self::WPAPPS_VERSION);
                 wp_enqueue_style('wpapps-admin');
             });
         }
         else { // frontend
             add_action('wp_print_styles', function() {
-                wp_register_style('wpapps', WPAPPS_URL.'/wpapps.css');
+                wp_register_style('wpapps', WPAPPS_URL.'/style/wpapps.css');
                 wp_enqueue_style('wpapps');
             });
         }
