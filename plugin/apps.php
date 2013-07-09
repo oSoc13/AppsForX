@@ -142,29 +142,42 @@ class WPApps {
         });
     }
 
+    // copy all files over to the themes directory on activation
+    // also remove them on plugin deactivation... if they weren't modified by the user
     private function setup_template() {
-        $tpl_source = WPAPPS_PATH . '/template.php';
-        $tpl_dest = get_template_directory() . '/event-template.php';
+        $tpl_source = WPAPPS_PATH . '/tpls';
+        $tpl_dest = get_template_directory();
 
         // perhaps use symlinks... linux|windows >6.1
 
         register_activation_hook(__FILE__, function() use ($tpl_source, $tpl_dest) {
-            if (!file_exists($tpl_dest)) {
-                if (!@copy($tpl_source, $tpl_dest)) {
-                    set_error_handler(function($a,$b) { die($b); });
-                    trigger_error("<strong>Couldn't copy page template.</strong><br />Please make sure that the write permissions for wp-content are correct.", E_USER_ERROR);
-                    restore_error_handler();
+            foreach_tplfile($tpl_source, $tpl_dest, function($src, $dest) {
+                if (!file_exists($dest)) {
+                    if (!@copy($src, $dest)) {
+                        set_error_handler(function($a,$b) { die($b); });
+                        trigger_error("<strong>Couldn't copy page template.</strong><br />Please make sure that the write permissions for wp-content are correct.", E_USER_ERROR);
+                        restore_error_handler();
+                    }
                 }
-            }
+            });
         });
 
         register_deactivation_hook(__FILE__, function() use ($tpl_source, $tpl_dest) {
-            @rename($tpl_dest, $tpl_dest.".old");
-            // if the file wasn't modified, we can safely delete it without the owner missing his file...
-            if (@md5_file($tpl_source) == @md5_file($tpl_dest.".old")) {
-                @unlink($tpl_dest.".old");
-            }
+            foreach_tplfile($tpl_source, $tpl_dest, function($src, $dest) {
+                @rename($dest, $dest.".old");
+                // if the file wasn't modified, we can safely delete it without the owner missing his file...
+                if (@md5_file($src) == @md5_file($dest.".old")) {
+                    @unlink($dest.".old");
+                }
+            });
         });
+
+        function foreach_tplfile($tpl_source, $tpl_dest, $func) {
+            foreach (glob("$tpl_source/*.php", GLOB_NOSORT) as $srcfile) {
+                $destfile = $tpl_dest . '/' . basename($srcfile);
+                $func($srcfile, $destfile);
+            }
+        }
     }
 }
 
