@@ -46,9 +46,10 @@ class WPApps {
 
         $this->dbtable = $wpdb->prefix . self::WPAPPS_DBTABLE;
 
+        $this->setup_debug();
         $this->setup_translations();
         $this->setup_options();
-        $this->setup_debug();
+        $this->setup_template();
 
         require_once WPAPPS_PATH . '/database.php';
         require_once WPAPPS_PATH . '/posttypes.php';
@@ -136,6 +137,31 @@ class WPApps {
     private function setup_translations() {
         add_action('plugins_loaded', function() {
             load_plugin_textdomain("wpapps", false, dirname(plugin_basename(__FILE__)) . "lang");
+        });
+    }
+
+    private function setup_template() {
+        $tpl_source = WPAPPS_PATH . '/template.php';
+        $tpl_dest = get_template_directory() . '/event-template.php';
+
+        // perhaps use symlinks... linux|windows >6.1
+
+        register_activation_hook(__FILE__, function() use ($tpl_source, $tpl_dest) {
+            if (!file_exists($tpl_dest)) {
+                if (!@copy($tpl_source, $tpl_dest)) {
+                    set_error_handler(function($a,$b) { die($b); });
+                    trigger_error("<strong>Couldn't copy page template.</strong><br />Please make sure that the write permissions for wp-content are correct.", E_USER_ERROR);
+                    restore_error_handler();
+                }
+            }
+        });
+
+        register_deactivation_hook(__FILE__, function() use ($tpl_source, $tpl_dest) {
+            @rename($tpl_dest, $tpl_dest.".old");
+            // if the file wasn't modified, we can safely delete it without the owner missing his file...
+            if (@md5_file($tpl_source) == @md5_file($tpl_dest.".old")) {
+                @unlink($tpl_dest.".old");
+            }
         });
     }
 }
