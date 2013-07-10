@@ -26,10 +26,14 @@ class WPApps_Posttypes {
         $this->main = $main;
 
         add_action('init', [$this, "register_event"]);
+        add_action('init', [$this, "register_idea"]);
+        add_action('init', [$this, "register_app"]);
 
         add_action("manage_event_posts_custom_column", [$this, 'custom_event_column'], 10, 2);
         add_filter('manage_event_posts_columns' , [$this, 'custom_event_columns']);
     }
+
+    ### Events
 
     function register_event() {
         register_post_type("event", array(
@@ -74,6 +78,68 @@ class WPApps_Posttypes {
                 echo date('d M Y - H:i', get_post_meta($post_id, 'when_start', true));
                 break;
         }
+    }
+
+    ### Apps(+Concepts)
+
+    function register_idea() {
+        register_post_type("idea", array(
+            'labels' => array(
+                'name' => 'Ideas',
+                'singular_name' => 'Idea',
+                'add_new' => 'Add New',
+                'add_new_item' => 'Add New Idea',
+                'edit_item' => 'Edit Idea',
+                'new_item' => 'New Idea',
+                'all_items' => 'Ideas',
+                'view_item' => 'View Idea',
+                'search_items' => 'Search Ideas',
+                'not_found' =>  'No ideas found',
+                'not_found_in_trash' => 'No ideas found in Trash',
+                'parent_item_colon' => '',
+                'menu_name' => 'Events'
+            ),
+            'public' => true,
+            'publicly_queryable' => true,
+            'show_ui' => true,
+            'show_in_menu' => false,
+            'query_var' => true,
+            'rewrite' => array( 'slug' => 'idea' ),
+            'capability_type' => 'post',
+            'has_archive' => true,
+            'hierarchical' => false,
+            'supports' => array( 'title', 'editor', 'comments' )
+        ));
+    }
+
+    function register_app() {
+        register_post_type("app", array(
+            'labels' => array(
+                'name' => 'Apps',
+                'singular_name' => 'App',
+                'add_new' => 'Add New',
+                'add_new_item' => 'Add New App',
+                'edit_item' => 'Edit App',
+                'new_item' => 'New App',
+                'all_items' => 'Apps',
+                'view_item' => 'View App',
+                'search_items' => 'Search Apps',
+                'not_found' =>  'No apps found',
+                'not_found_in_trash' => 'No apps found in Trash',
+                'parent_item_colon' => '',
+                'menu_name' => 'Apps'
+            ),
+            'public' => true,
+            'publicly_queryable' => true,
+            'show_ui' => true,
+            'show_in_menu' => false,
+            'query_var' => true,
+            'rewrite' => array( 'slug' => 'app' ),
+            'capability_type' => 'post',
+            'has_archive' => true,
+            'hierarchical' => false,
+            'supports' => array( 'title', 'editor', 'comments' )
+        ));
     }
 
 }

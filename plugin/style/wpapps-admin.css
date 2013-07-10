@@ -3,8 +3,16 @@
 
 .row-actions span { display: inline;}
 
-#icon-wpapps {
+.icon32-posts-event {
     background-image: url(calendar32.png);
+}
+
+.icon32-posts-idea {
+    background-image: url(ideas32.png);
+}
+
+.icon32-posts-app {
+    background-image: url(apps32.png);
 }
 
 .current-image img { width: 150px; height: 150px;}

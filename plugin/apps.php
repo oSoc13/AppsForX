@@ -24,7 +24,7 @@
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  *
- * Attributions: Event icon based on the icons by Designmodo, Creative Commons License
+ * Attributions: See README or GitHub page for the full attributions list
 */
 
 defined('ABSPATH') || exit;
@@ -103,7 +103,10 @@ class WPApps {
 
                 add_submenu_page("wpapps", "Overview", "Overview", "edit_others_posts", "wpapps", [$this, "page_overview"]); // overwrite menu title
                 add_submenu_page("wpapps", "Events", "Events", "edit_others_posts", "edit.php?post_type=event");
-                add_submenu_page("wpapps", "App concept ideas", "Ideas", "edit_others_posts", "wpapps_ideas", [$this, "page_ideas"]);
+                add_submenu_page("wpapps", "Ideas", "Ideas", "edit_others_posts", "edit.php?post_type=idea");
+                add_submenu_page("wpapps", "Apps", "Apps", "edit_others_posts", "edit.php?post_type=app");
+
+                //add_submenu_page("wpapps", "App concept ideas", "Ideas", "edit_others_posts", "wpapps_ideas", [$this, "page_ideas"]);
             });
 
             // Add admin css
