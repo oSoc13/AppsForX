@@ -53,7 +53,7 @@ class WPApps {
         $this->setup_options();
         $this->setup_template();
 
-        require_once WPAPPS_PATH . '/database.php';
+        require_once WPAPPS_PATH . '/database.php'; // Purge?
         require_once WPAPPS_PATH . '/posttypes.php';
         require_once WPAPPS_PATH . '/metaboxes.php';
 
@@ -144,14 +144,21 @@ class WPApps {
 
     // copy all files over to the themes directory on activation
     // also remove them on plugin deactivation... if they weren't modified by the user
+    // Future: perhaps use symlinks... linux|windows >6.1
     private function setup_template() {
         $tpl_source = WPAPPS_PATH . '/tpls';
         $tpl_dest = get_template_directory();
 
-        // perhaps use symlinks... linux|windows >6.1
+        // A function declared in a private function inside a class, becomes a global function...
+        $foreach_tplfile = function($tpl_source, $tpl_dest, $func) {
+            foreach (glob("$tpl_source/*.php", GLOB_NOSORT) as $srcfile) {
+                $destfile = $tpl_dest . '/' . basename($srcfile);
+                $func($srcfile, $destfile);
+            }
+        };
 
-        register_activation_hook(__FILE__, function() use ($tpl_source, $tpl_dest) {
-            foreach_tplfile($tpl_source, $tpl_dest, function($src, $dest) {
+        register_activation_hook(__FILE__, function() use ($foreach_tplfile, $tpl_source, $tpl_dest) {
+            $foreach_tplfile($tpl_source, $tpl_dest, function($src, $dest) {
                 if (!file_exists($dest)) {
                     if (!@copy($src, $dest)) {
                         set_error_handler(function($a,$b) { die($b); });
@@ -162,8 +169,8 @@ class WPApps {
             });
         });
 
-        register_deactivation_hook(__FILE__, function() use ($tpl_source, $tpl_dest) {
-            foreach_tplfile($tpl_source, $tpl_dest, function($src, $dest) {
+        register_deactivation_hook(__FILE__, function() use ($foreach_tplfile, $tpl_source, $tpl_dest) {
+            $foreach_tplfile($tpl_source, $tpl_dest, function($src, $dest) {
                 @rename($dest, $dest.".old");
                 // if the file wasn't modified, we can safely delete it without the owner missing his file...
                 if (@md5_file($src) == @md5_file($dest.".old")) {
@@ -171,13 +178,6 @@ class WPApps {
                 }
             });
         });
-
-        function foreach_tplfile($tpl_source, $tpl_dest, $func) {
-            foreach (glob("$tpl_source/*.php", GLOB_NOSORT) as $srcfile) {
-                $destfile = $tpl_dest . '/' . basename($srcfile);
-                $func($srcfile, $destfile);
-            }
-        }
     }
 }
 
