@@ -48,4 +48,5 @@ License: GPL2
 Attributions:
  * Event icons based on designs by Designmodo, licensed under Creative Commons CC BY 3.0
  * Idea icon by [Emey87](http://emey87.deviantart.com/), licensed under Creative Commons CC BY-ND 3.0
+ * App icon by [Omercetin](http://omercetin.deviantart.com/), licensed under Creative Commons BY-NC-ND 3.0
  * [Custom-Meta-Boxes](https://github.com/humanmade/Custom-Meta-Boxes) library by HumanMade
