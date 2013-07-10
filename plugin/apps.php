@@ -7,6 +7,7 @@
  * Version: 1.0
  * Author: Cedric Van Bockhaven
  * Author URI: http://ce3c.be
+ * Text Domain: wpapps
 
  * Copyright: OKFN Belgium (some rights reserved)
  * License: GPL2
@@ -185,3 +186,12 @@ class WPApps {
 }
 
 new WPApps;
+
+function my_connection_types() {
+    p2p_register_connection_type( array(
+        'name' => 'posts_to_pages',
+        'from' => 'event',
+        'to' => 'idea'
+    ) );
+}
+add_action( 'p2p_init', 'my_connection_types' );

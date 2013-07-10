@@ -33,6 +33,9 @@ $wp_query = new WP_Query($args);
                         <p><strong>Starts:</strong> <?php echo date("F j, Y - H:i", $meta['when_start'][0]) ?><br />
                         <strong>Ends:</strong>  <?php echo date("F j, Y - H:i", $meta['when_end'][0]) ?></p>
                         <?php the_content( __( 'Continue reading <span class="meta-nav">&rarr;</span>', 'wpapps' ) ); ?>
+
+                        <h5>Ideas ($count)</h5>
+                        list-ideas
                         <!-- Shouldn't this be at the very very bottom? -->
                         <?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'wpapps' ), 'after' => '</div>' ) ); ?>
                     </div><!-- .entry-content -->
