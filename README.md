@@ -1,6 +1,9 @@
 AppsForX WordPress plugin
 ========
 
+Introduction
+------------
+
 This is a WordPress plugin which enables event organizers to manage their events.
 People can submit ideas to these events.
 
@@ -10,6 +13,21 @@ The plugin should then be able to handle the aspects of adding/editing/submittin
 
 This plugin aims to be conform the [Apps4X](https://github.com/mmlab/apps4eu-vocabulary/) ontology.
 It was built for the [Apps for Europe](http://appsforeurope.eu/) project.
+
+Installation
+------------
+
+To use the plugin, follow these steps:
+ * Move the plugin/ folder inside your wp-content/plugins/ directory. 
+ * In the administration area of your WordPress site, go to the Plugins section and activate the plugin.
+ * Create pages and assign the AppsForX page templates to them where you want the event list to be shown.
+   ![Event list](http://i.imgur.com/ye9YOQc.png)
+ 
+Please make sure that your wp-content/* folders are properly chmodded. 
+Your themes directory has to be writable for this plugin to work.
+
+Copyright
+---------
 
 Copyright: OKFN Belgium (some rights reserved)  
 License: GPL2
