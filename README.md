@@ -12,12 +12,14 @@ People were able to submit ideas for this hackathon, like a "GitHub Livefeed".
 The plugin should then be able to handle the aspects of adding/editing/submitting ideas and events.
 
 This plugin aims to be conform the [Apps4X](https://github.com/mmlab/apps4eu-vocabulary/) ontology.
+This means that the publicly viewable pages using this plugin will contain the corresponding RDFa tags for the vocabulary.
 It was built for the [Apps for Europe](http://appsforeurope.eu/) project.
 
 Installation
 ------------
 
 To use the plugin, follow these steps:
+ * (Recursively!) clone the repository because it has other submodules linked in.
  * Move the plugin/ folder inside your wp-content/plugins/ directory. 
  * In the administration area of your WordPress site, go to the Plugins section and activate the plugin.
  * Create pages and assign the AppsForX page templates to them where you want the event list to be shown.
@@ -25,6 +27,8 @@ To use the plugin, follow these steps:
  
 Please make sure that your wp-content/* folders are properly chmodded. 
 Your themes directory has to be writable for this plugin to work.
+
+Downloading the ZIP file won't work! GitHub doesn't automatically include the submodules.
 
 Copyright
 ---------
@@ -46,7 +50,7 @@ License: GPL2
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 Attributions:
- * Event icons based on designs by Designmodo, licensed under Creative Commons CC BY 3.0
- * Idea icon by [Emey87](http://emey87.deviantart.com/), licensed under Creative Commons CC BY-ND 3.0
+ * Event icons based on designs by Designmodo, licensed under Creative Commons BY 3.0
+ * Idea icon by [Emey87](http://emey87.deviantart.com/), licensed under Creative Commons BY-ND 3.0
  * App icon by [Omercetin](http://omercetin.deviantart.com/), licensed under Creative Commons BY-NC-ND 3.0
  * [Custom-Meta-Boxes](https://github.com/humanmade/Custom-Meta-Boxes) library by HumanMade
