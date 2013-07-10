@@ -28,4 +28,4 @@ License: GPL2
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 Attributions:
- * Event icons based on designs by Designmodo, licensed under Creative Commons
+ * Event icons based on designs by Designmodo, licensed under Creative Commons CC BY 3.0
