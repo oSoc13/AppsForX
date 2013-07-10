@@ -1,3 +1,6 @@
 [submodule "plugin/posts-to-posts"]
 	path = plugin/posts-to-posts
 	url = https://github.com/scribu/wp-posts-to-posts.git
+[submodule "plugin/cmb"]
+	path = plugin/cmb
+	url = https://github.com/humanmade/Custom-Meta-Boxes.git
