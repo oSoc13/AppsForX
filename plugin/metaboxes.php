@@ -40,11 +40,11 @@ class WPApps_Metaboxes {
             'title' => 'Information',
             'pages' => 'event',
             'fields' => [
-                ['id' => 'field-12', 'name' => 'Event Logo', 'type' => 'image', 'repeatable' => false],
-                ['id' => 'when_start', 'name' => 'Event Start', 'type' => 'datetime_unix'],
-                ['id' => 'when_end', 'name' => 'Event End', 'type' => 'datetime_unix'],
-                ['id' => 'field-20', 'name' => 'Event Location', 'type' => 'textarea'],
-                ['id' => 'edition', 'name' => 'Edition', 'type' => 'text']
+                ['id' => 'logo', 'name' => 'Event Logo', 'type' => 'image', 'repeatable' => false],
+                ['id' => 'when_start', 'name' => 'Event Start', 'type' => 'datetime_unix', 'repeatable' => false],
+                ['id' => 'when_end', 'name' => 'Event End', 'type' => 'datetime_unix', 'repeatable' => false],
+                ['id' => 'location', 'name' => 'Event Location', 'type' => 'textarea', 'repeatable' => false],
+                ['id' => 'edition', 'name' => 'Edition', 'type' => 'text', 'repeatable' => false]
             ],
             'context' => 'side',
             'priority' => 'high'
@@ -53,7 +53,7 @@ class WPApps_Metaboxes {
             'title' => 'Jury',
             'pages' => 'event',
             'fields' => [
-                ['id' => 'field-13', 'name' => "Jurylid", 'type' => 'text', 'repeatable' => true]
+                ['id' => 'jury', 'name' => "Jurylid", 'type' => 'text', 'repeatable' => true]
             ]
         ];
         return $meta_boxes;
