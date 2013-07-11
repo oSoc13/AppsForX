@@ -1,5 +1,5 @@
 AppsForX WordPress plugin
-========
+=========================
 
 Introduction
 ------------
@@ -18,13 +18,26 @@ It was built for the [Apps for Europe](http://appsforeurope.eu/) project.
 Installation
 ------------
 
+#### Requirements
+
+Your server might vaporize if these minimum requirements aren't met:
+ * PHP > 5.4 (might change in the future to have PHP 5.3 compat)
+ * WordPress > 3.5
+
+#### Installation
+
 To use the plugin, follow these steps:
  * (Recursively!) clone the repository because it has other submodules linked in.
  * Move the plugin/ folder inside your wp-content/plugins/ directory. 
  * In the administration area of your WordPress site, go to the Plugins section and activate the plugin.
  * Create pages and assign the AppsForX page templates to them where you want the event list to be shown.
    ![Event list](http://i.imgur.com/ye9YOQc.png)
- 
+ * If you want users to be able to submit ideas/apps, give them at least the "Submitter" role.
+   You may want to enable open user registration as well. You can find these parameters under Settings > General.
+   ![Submitter role](http://i.imgur.com/btTboFA.png)
+
+#### Troubleshooting
+
 Please make sure that your wp-content/* folders are properly chmodded. 
 Your themes directory has to be writable for this plugin to work.
 
