@@ -54,3 +54,5 @@ Attributions:
  * Idea icon by [Emey87](http://emey87.deviantart.com/), licensed under Creative Commons BY-ND 3.0
  * App icon by [Omercetin](http://omercetin.deviantart.com/), licensed under Creative Commons BY-NC-ND 3.0
  * [Custom-Meta-Boxes](https://github.com/humanmade/Custom-Meta-Boxes) library by HumanMade
+ * [wp-posts-to-posts](https://github.com/scribu/wp-posts-to-posts) and [wp-scb-framework](https://github.com/scribu/wp-scb-framework) by scribu
+ * [Mustache](https://github.com/bobthecow/mustache.php) library (indirectly) by bobthecow
