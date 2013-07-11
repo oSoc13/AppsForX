@@ -52,13 +52,14 @@ class WPApps {
         $this->setup_debug();
         $this->setup_translations();
         $this->setup_options();
+
         $this->setup_relationships();
         $this->setup_template();
 
         require_once WPAPPS_PATH . '/database.php'; // Purge?
         require_once WPAPPS_PATH . '/posttypes.php';
         require_once WPAPPS_PATH . '/metaboxes.php';
-
+        $this->setup_roles();
         $this->database = new WPApps_Database($this);
         $this->posttypes = new WPApps_Posttypes($this);
         $this->metaboxes = new WPApps_Metaboxes($this);
@@ -198,6 +199,55 @@ class WPApps {
                 'to' => 'idea'
             ]);
         });
+    }
+
+    private function setup_roles() // Move to posttypes.php? Must be hooked into activation hook tho
+    {
+        // http://stackoverflow.com/a/16656057
+        // WP3.5+ in combo with the meta_cap of posttypes
+
+        // http://wordpress.stackexchange.com/a/88397
+        // "Turns out it's a real bad idea to map your own meta capabilities."
+
+        // do this as activation hook, since it will be added to the database
+        remove_role('idea_submitter');
+        remove_role('wpapps_submitter');
+
+        add_role('wpapps_submitter', 'Submitter', ["read" => true]);
+
+        $allcaps = [];
+
+        $roles = [
+            "subscriber" => [
+                'read_idea' => true
+            ],
+            "contributor" => [
+                'edit_ideas' => true,
+                'delete_ideas' => true
+            ],
+            "author" => [
+                'edit_idea' => true,
+                'delete_idea' => true,
+                'edit_published_ideas' => true,
+                'delete_published_ideas' => true
+            ],
+            "wpapps_submitter" => [],
+            "editor" => [
+                'delete_others_ideas' => true,
+                'edit_private_ideas' => true,
+            ],
+            "administrator" => []
+        ];
+
+        foreach($roles as $role => $caps) {
+            $allcaps = array_merge($allcaps, $caps);
+
+            foreach ($allcaps as $cap => $val) {
+                get_role($role)->add_cap($cap, $val);
+            }
+        }
+
+
     }
 }
 

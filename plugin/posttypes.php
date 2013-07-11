@@ -58,7 +58,7 @@ class WPApps_Posttypes {
             'show_in_menu' => false,
             'query_var' => true,
             'rewrite' => array( 'slug' => 'event' ),
-            'capability_type' => 'post',
+            'capability_type' => 'page',
             'has_archive' => true,
             'hierarchical' => false,
             'supports' => array( 'title', 'editor', 'comments' )
@@ -105,11 +105,15 @@ class WPApps_Posttypes {
             'show_in_menu' => false,
             'query_var' => true,
             'rewrite' => array( 'slug' => 'idea' ),
-            'capability_type' => 'post',
+            //'capability_type' => 'post',
+            'capability_type' => 'idea',
             'has_archive' => true,
             'hierarchical' => false,
-            'supports' => array( 'title', 'editor', 'comments' )
+            'supports' => array( 'title', 'editor', 'comments' ),
+            // new since 3.5 http://codex.wordpress.org/Function_Reference/register_post_type
+            'map_meta_cap' => true
         ));
+        //var_dump($GLOBALS['wp_post_types']['idea']);
     }
 
     function register_app() {
