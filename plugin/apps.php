@@ -95,21 +95,22 @@ class WPApps {
             // not sure if this is the correct action to hook into, but it seems to work
             add_action('admin_head', function() {
                 global $submenu_file, $parent_file;
-                if (@$_REQUEST["post_type"] == "event" || (get_post() && get_post_type(get_the_ID()) == "event")) {
+                $types = ["event", "idea", "app"];
+                $ptype = @($_REQUEST["post_type"] ?: get_post_type(get_the_ID()));
+
+                if (in_array($ptype, $types)) {
                     $parent_file = "wpapps";
-                    $submenu_file = "edit.php?post_type=event";
+                    $submenu_file = "edit.php?post_type=$ptype";
                 }
             });
 
             add_action('admin_menu', function() {
-                add_menu_page("Apps4X", "Apps4X", "edit_others_posts", "wpapps", [$this, "page_overview"], WPAPPS_URL . "/style/calendar16.png", (string)(27+M_PI)); // rule of pi
+                add_menu_page("Apps4X", "Apps4X", "edit_ideas", "wpapps", [$this, "page_overview"], WPAPPS_URL . "/style/calendar16.png", (string)(27+M_PI)); // rule of pi
 
-                add_submenu_page("wpapps", "Overview", "Overview", "edit_others_posts", "wpapps", [$this, "page_overview"]); // overwrite menu title
-                add_submenu_page("wpapps", "Events", "Events", "edit_others_posts", "edit.php?post_type=event");
-                add_submenu_page("wpapps", "Ideas", "Ideas", "edit_others_posts", "edit.php?post_type=idea");
-                add_submenu_page("wpapps", "Apps", "Apps", "edit_others_posts", "edit.php?post_type=app");
-
-                //add_submenu_page("wpapps", "App concept ideas", "Ideas", "edit_others_posts", "wpapps_ideas", [$this, "page_ideas"]);
+                add_submenu_page("wpapps", "Overview", "Overview", "edit_ideas", "wpapps", [$this, "page_overview"]); // overwrite menu title
+                add_submenu_page("wpapps", "Events", "Events", "edit_others_ideas", "edit.php?post_type=event");
+                add_submenu_page("wpapps", "Ideas", "Ideas", "edit_ideas", "edit.php?post_type=idea");
+                add_submenu_page("wpapps", "Apps", "Apps", "edit_others_ideas", "edit.php?post_type=app");
             });
 
             // Add admin css
@@ -218,21 +219,21 @@ class WPApps {
         $allcaps = [];
 
         $roles = [
-            "subscriber" => [
-                'read_idea' => true
-            ],
+            "subscriber" => [],
             "contributor" => [
+                'read_idea' => true,
                 'edit_ideas' => true,
-                'delete_ideas' => true
-            ],
-            "author" => [
+                'delete_ideas' => true,
                 'edit_idea' => true,
                 'delete_idea' => true,
                 'edit_published_ideas' => true,
                 'delete_published_ideas' => true
             ],
+            "author" => [],
             "wpapps_submitter" => [],
             "editor" => [
+                'edit_others_ideas' => true,
+                'delete_private_ideas' => true,
                 'delete_others_ideas' => true,
                 'edit_private_ideas' => true,
             ],
