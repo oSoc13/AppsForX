@@ -52,6 +52,7 @@ class WPApps {
         $this->setup_debug();
         $this->setup_translations();
         $this->setup_options();
+        $this->setup_relationships();
         $this->setup_template();
 
         require_once WPAPPS_PATH . '/database.php'; // Purge?
@@ -183,15 +184,21 @@ class WPApps {
             });
         });
     }
+
+    private function setup_relationships()
+    {
+        // Only include P2P if it isn't being used by the site owner yet
+        if (!defined("P2P_TEXTDOMAIN"))
+            require WPAPPS_PATH . '/posts-to-posts/posts-to-posts.php';
+
+        add_action('p2p_init', function () {
+            p2p_register_connection_type([
+                'name' => 'events_to_ideas',
+                'from' => 'event',
+                'to' => 'idea'
+            ]);
+        });
+    }
 }
 
 new WPApps;
-
-function my_connection_types() {
-    p2p_register_connection_type( array(
-        'name' => 'posts_to_pages',
-        'from' => 'event',
-        'to' => 'idea'
-    ) );
-}
-add_action( 'p2p_init', 'my_connection_types' );
