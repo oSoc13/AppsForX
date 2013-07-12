@@ -53,13 +53,14 @@ class WPApps {
         $this->setup_translations();
         $this->setup_options();
 
+        $this->setup_roles();
         $this->setup_relationships();
         $this->setup_template();
 
         require_once WPAPPS_PATH . '/database.php'; // Purge?
         require_once WPAPPS_PATH . '/posttypes.php';
         require_once WPAPPS_PATH . '/metaboxes.php';
-        $this->setup_roles();
+
         $this->database = new WPApps_Database($this);
         $this->posttypes = new WPApps_Posttypes($this);
         $this->metaboxes = new WPApps_Metaboxes($this);
@@ -108,9 +109,9 @@ class WPApps {
                 add_menu_page("Apps4X", "Apps4X", "edit_ideas", "wpapps", [$this, "page_overview"], WPAPPS_URL . "/style/calendar16.png", (string)(27+M_PI)); // rule of pi
 
                 add_submenu_page("wpapps", "Overview", "Overview", "edit_ideas", "wpapps", [$this, "page_overview"]); // overwrite menu title
-                add_submenu_page("wpapps", "Events", "Events", "edit_others_ideas", "edit.php?post_type=event");
+                add_submenu_page("wpapps", "Events", "Events", "edit_events", "edit.php?post_type=event");
                 add_submenu_page("wpapps", "Ideas", "Ideas", "edit_ideas", "edit.php?post_type=idea");
-                add_submenu_page("wpapps", "Apps", "Apps", "edit_others_ideas", "edit.php?post_type=app");
+                add_submenu_page("wpapps", "Apps", "Apps", "edit_apps", "edit.php?post_type=app");
             });
 
             // Add admin css
@@ -197,7 +198,15 @@ class WPApps {
             p2p_register_connection_type([
                 'name' => 'events_to_ideas',
                 'from' => 'event',
-                'to' => 'idea'
+                'to' => 'idea',
+                'can_create_post' => current_user_can("edit_others_ideas")
+            ]);
+
+            p2p_register_connection_type([
+                'name' => 'ideas_to_apps',
+                'from' => 'idea',
+                'to' => 'app',
+                'can_create_post' => current_user_can("edit_apps")
             ]);
         });
     }
@@ -206,12 +215,10 @@ class WPApps {
     {
         // http://stackoverflow.com/a/16656057
         // WP3.5+ in combo with the meta_cap of posttypes
-
         // http://wordpress.stackexchange.com/a/88397
         // "Turns out it's a real bad idea to map your own meta capabilities."
-
         // do this as activation hook, since it will be added to the database
-        remove_role('wpapps_submitter');
+        remove_role('wpapps_submitter'); // remove this line when adding activation hook
 
         add_role('wpapps_submitter', 'Submitter', ["read" => true]);
 
@@ -227,7 +234,16 @@ class WPApps {
                 'delete_idea' => true,
                 'edit_published_ideas' => true,
                 'delete_published_ideas' => true,
-                'create_posts' => true
+
+                'read_app' => true,
+                'edit_apps' => true,
+                'delete_apps' => true,
+                'edit_app' => true,
+                'delete_app' => true,
+                'edit_published_apps' => true,
+                'delete_published_apps' => true,
+
+                'read_event' => true,
             ],
             "author" => [],
             "wpapps_submitter" => [],
@@ -236,7 +252,25 @@ class WPApps {
                 'delete_private_ideas' => true,
                 'delete_others_ideas' => true,
                 'edit_private_ideas' => true,
-                'publish_ideas' => true
+                'publish_ideas' => true,
+
+                'edit_others_apps' => true,
+                'delete_private_apps' => true,
+                'delete_others_apps' => true,
+                'edit_private_apps' => true,
+                'publish_apps' => true,
+
+                'edit_events' => true,
+                'delete_events' => true,
+                'edit_event' => true,
+                'delete_event' => true,
+                'edit_published_events' => true,
+                'delete_published_events' => true,
+                'edit_others_events' => true,
+                'delete_private_events' => true,
+                'delete_others_events' => true,
+                'edit_private_events' => true,
+                'publish_events' => true,
             ],
             "administrator" => []
         ];
@@ -255,13 +289,11 @@ class WPApps {
         add_filter('user_has_cap', function ($allcaps, $cap, $args) {
             global $_wp_menu_nopriv, $_wp_submenu_nopriv;
 
-            if (@$cap[0] == "edit_posts" && @$allcaps["edit_ideas"]) {
+            if (@$cap[0] == "edit_posts" && (@$allcaps["edit_ideas"] || @$allcaps["edit_apps"]))
                 unset($_wp_menu_nopriv["edit.php"], $_wp_submenu_nopriv["edit.php"]);
-            }
 
             return $allcaps;
         }, 10, 3);
     }
 }
-
 new WPApps;

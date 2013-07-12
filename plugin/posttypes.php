@@ -58,10 +58,11 @@ class WPApps_Posttypes {
             'show_in_menu' => false,
             'query_var' => true,
             'rewrite' => array( 'slug' => 'event' ),
-            'capability_type' => 'page',
+            'capability_type' => 'event',
             'has_archive' => true,
             'hierarchical' => false,
-            'supports' => array( 'title', 'editor', 'comments' )
+            'supports' => array( 'title', 'editor', 'comments' ),
+            'map_meta_cap' => true
         ));
     }
 
@@ -105,7 +106,6 @@ class WPApps_Posttypes {
             'show_in_menu' => false,
             'query_var' => true,
             'rewrite' => array( 'slug' => 'idea' ),
-            //'capability_type' => 'post',
             'capability_type' => 'idea',
             'has_archive' => true,
             'hierarchical' => false,
@@ -138,10 +138,11 @@ class WPApps_Posttypes {
             'show_in_menu' => false,
             'query_var' => true,
             'rewrite' => array( 'slug' => 'app' ),
-            'capability_type' => 'post',
+            'capability_type' => 'app',
             'has_archive' => true,
             'hierarchical' => false,
-            'supports' => array( 'title', 'editor', 'comments' )
+            'supports' => array( 'title', 'editor', 'comments' ),
+            'map_meta_cap' => true
         ));
     }
 
