@@ -7,7 +7,7 @@ index c84a3f9..a504f8d 100644
  	function can_edit_connections() {
  		try {
 -			return current_user_can( $this->get_ptype()->cap->edit_posts );
-+			return 1;//current_user_can( $this->get_ptype()->cap->edit_posts );
++			return current_user_can( $this->get_ptype()->cap->read );
  		} catch ( P2P_Exception $e ) {
  			trigger_error( $e->getMessage(), E_USER_WARNING );
  			return false;

@@ -244,6 +244,9 @@ class WPApps {
                 'delete_published_apps' => true,
 
                 'read_event' => true,
+                'read_events' => true,
+                'read_ideas' => true,
+                'read_apps' => true
             ],
             "author" => [],
             "wpapps_submitter" => [],
@@ -288,7 +291,7 @@ class WPApps {
         // that way, edit.php won't show up in the menu, but we'll be able to access it with Submitter permissions
         add_filter('user_has_cap', function ($allcaps, $cap, $args) {
             global $_wp_menu_nopriv, $_wp_submenu_nopriv;
-
+            //print_r(debug_backtrace());
             if (@$cap[0] == "edit_posts" && (@$allcaps["edit_ideas"] || @$allcaps["edit_apps"]))
                 unset($_wp_menu_nopriv["edit.php"], $_wp_submenu_nopriv["edit.php"]);
 
