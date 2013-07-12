@@ -57,35 +57,13 @@ class WPApps {
         $this->setup_relationships();
         $this->setup_template();
 
-        require_once WPAPPS_PATH . '/database.php'; // Purge?
         require_once WPAPPS_PATH . '/posttypes.php';
         require_once WPAPPS_PATH . '/metaboxes.php';
 
-        $this->database = new WPApps_Database($this);
         $this->posttypes = new WPApps_Posttypes($this);
         $this->metaboxes = new WPApps_Metaboxes($this);
 
         $this->setup_hooks();
-    }
-
-    function page_overview() {}
-    function page_events() { // ToDo: separate
-        global $wpdb, $submenu_file;
-
-        if (@$_GET["action"] == "add") {
-
-        } else {
-            // leave room for other possible count(*)'s
-            $counts = $wpdb->get_row("SELECT
-                (SELECT COUNT(*) FROM {$this->dbtable}_events) AS events_all
-            ");
-
-            require_once(dirname(__FILE__)."/page_events.tbl.php");
-            $eventsTable = new WPApps_EventsTable($this);
-            $eventsTable->prepare_items();
-
-            include(dirname(__FILE__).'/page_events.tpl.php');
-        }
     }
 
     function setup_hooks() {  // ToDo: separate?
@@ -127,6 +105,8 @@ class WPApps {
             });
         }
     }
+
+    public function page_overview() {} // ToDo
 
     private function setup_options() {
         $defaults = [
@@ -213,78 +193,80 @@ class WPApps {
 
     private function setup_roles() // Move to posttypes.php? Must be hooked into activation hook tho
     {
+        // WP3.5+ only
         // http://stackoverflow.com/a/16656057
-        // WP3.5+ in combo with the meta_cap of posttypes
         // http://wordpress.stackexchange.com/a/88397
-        // "Turns out it's a real bad idea to map your own meta capabilities."
-        // do this as activation hook, since it will be added to the database
-        remove_role('wpapps_submitter'); // remove this line when adding activation hook
 
-        add_role('wpapps_submitter', 'Submitter', ["read" => true]);
+        register_activation_hook(__FILE__, function () {
+            add_role('wpapps_submitter', 'Submitter', ["read" => true]);
 
-        $allcaps = [];
+            $allcaps = [];
+            $roles = [
+                "subscriber" => [],
+                "contributor" => [
+                    'read_idea' => true,
+                    'read_ideas' => true,
+                    'edit_ideas' => true,
+                    'delete_ideas' => true,
+                    'edit_idea' => true,
+                    'delete_idea' => true,
+                    'edit_published_ideas' => true,
+                    'delete_published_ideas' => true,
 
-        $roles = [
-            "subscriber" => [],
-            "contributor" => [
-                'read_idea' => true,
-                'edit_ideas' => true,
-                'delete_ideas' => true,
-                'edit_idea' => true,
-                'delete_idea' => true,
-                'edit_published_ideas' => true,
-                'delete_published_ideas' => true,
+                    'read_app' => true,
+                    'read_apps' => true, // magic
+                    'edit_apps' => true,
+                    'delete_apps' => true,
+                    'edit_app' => true,
+                    'delete_app' => true,
+                    'edit_published_apps' => true,
+                    'delete_published_apps' => true,
 
-                'read_app' => true,
-                'edit_apps' => true,
-                'delete_apps' => true,
-                'edit_app' => true,
-                'delete_app' => true,
-                'edit_published_apps' => true,
-                'delete_published_apps' => true,
+                    'read_event' => true,
+                    'read_events' => true,
+                ],
+                "author" => [],
+                "wpapps_submitter" => [],
+                "editor" => [
+                    'edit_others_ideas' => true,
+                    'delete_private_ideas' => true,
+                    'delete_others_ideas' => true,
+                    'edit_private_ideas' => true,
+                    'publish_ideas' => true,
 
-                'read_event' => true,
-                'read_events' => true,
-                'read_ideas' => true,
-                'read_apps' => true
-            ],
-            "author" => [],
-            "wpapps_submitter" => [],
-            "editor" => [
-                'edit_others_ideas' => true,
-                'delete_private_ideas' => true,
-                'delete_others_ideas' => true,
-                'edit_private_ideas' => true,
-                'publish_ideas' => true,
+                    'edit_others_apps' => true,
+                    'delete_private_apps' => true,
+                    'delete_others_apps' => true,
+                    'edit_private_apps' => true,
+                    'publish_apps' => true,
 
-                'edit_others_apps' => true,
-                'delete_private_apps' => true,
-                'delete_others_apps' => true,
-                'edit_private_apps' => true,
-                'publish_apps' => true,
+                    'edit_events' => true,
+                    'delete_events' => true,
+                    'edit_event' => true,
+                    'delete_event' => true,
+                    'edit_published_events' => true,
+                    'delete_published_events' => true,
+                    'edit_others_events' => true,
+                    'delete_private_events' => true,
+                    'delete_others_events' => true,
+                    'edit_private_events' => true,
+                    'publish_events' => true,
+                ],
+                "administrator" => []
+            ];
 
-                'edit_events' => true,
-                'delete_events' => true,
-                'edit_event' => true,
-                'delete_event' => true,
-                'edit_published_events' => true,
-                'delete_published_events' => true,
-                'edit_others_events' => true,
-                'delete_private_events' => true,
-                'delete_others_events' => true,
-                'edit_private_events' => true,
-                'publish_events' => true,
-            ],
-            "administrator" => []
-        ];
+            foreach($roles as $role => $caps) {
+                $allcaps = array_merge($allcaps, $caps);
 
-        foreach($roles as $role => $caps) {
-            $allcaps = array_merge($allcaps, $caps);
-
-            foreach ($allcaps as $cap => $val) {
-                get_role($role)->add_cap($cap, $val);
+                foreach ($allcaps as $cap => $val) {
+                    get_role($role)->add_cap($cap, $val);
+                }
             }
-        }
+        });
+
+        register_deactivation_hook(__FILE__, function() {
+            remove_role('wpapps_submitter');
+        });
 
         // Dirty hack to work around the edit_posts capability
         // When we're on post-new.php, we manually reset the edit.php permissions

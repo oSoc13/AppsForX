@@ -65,8 +65,6 @@ class WPApps_Posttypes {
             'map_meta_cap' => true,
             'capabilities' => ['read' => 'read_events']
         ));
-
-       // print_r($GLOBALS['wp_post_types']['event']);
     }
 
     // set browsable event fields, handle display
@@ -113,7 +111,6 @@ class WPApps_Posttypes {
             'has_archive' => true,
             'hierarchical' => false,
             'supports' => array( 'title', 'editor', 'comments' ),
-            // new since 3.5 http://codex.wordpress.org/Function_Reference/register_post_type
             'map_meta_cap' => true,
             'capabilities' => ['read' => 'read_events']
         ));
@@ -147,7 +144,7 @@ class WPApps_Posttypes {
             'hierarchical' => false,
             'supports' => array( 'title', 'editor', 'comments' ),
             'map_meta_cap' => true,
-            'capabilities' => ['read' => 'read_events']
+            'capabilities' => ['read' => 'read_events' /*NOT read_event*/]
         ));
     }
 
