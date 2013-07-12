@@ -97,7 +97,7 @@ class WPApps_Posttypes {
                 'not_found' =>  'No ideas found',
                 'not_found_in_trash' => 'No ideas found in Trash',
                 'parent_item_colon' => '',
-                'menu_name' => 'Events'
+                'menu_name' => 'Ideas'
             ),
             'public' => true,
             'publicly_queryable' => true,
@@ -113,7 +113,6 @@ class WPApps_Posttypes {
             // new since 3.5 http://codex.wordpress.org/Function_Reference/register_post_type
             'map_meta_cap' => true
         ));
-        //var_dump($GLOBALS['wp_post_types']['idea']);
     }
 
     function register_app() {

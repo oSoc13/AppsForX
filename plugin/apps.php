@@ -211,7 +211,6 @@ class WPApps {
         // "Turns out it's a real bad idea to map your own meta capabilities."
 
         // do this as activation hook, since it will be added to the database
-        remove_role('idea_submitter');
         remove_role('wpapps_submitter');
 
         add_role('wpapps_submitter', 'Submitter', ["read" => true]);
@@ -227,7 +226,8 @@ class WPApps {
                 'edit_idea' => true,
                 'delete_idea' => true,
                 'edit_published_ideas' => true,
-                'delete_published_ideas' => true
+                'delete_published_ideas' => true,
+                'create_posts' => true
             ],
             "author" => [],
             "wpapps_submitter" => [],
@@ -236,6 +236,7 @@ class WPApps {
                 'delete_private_ideas' => true,
                 'delete_others_ideas' => true,
                 'edit_private_ideas' => true,
+                'publish_ideas' => true
             ],
             "administrator" => []
         ];
@@ -248,7 +249,18 @@ class WPApps {
             }
         }
 
+        // Dirty hack to work around the edit_posts capability
+        // When we're on post-new.php, we manually reset the edit.php permissions
+        // that way, edit.php won't show up in the menu, but we'll be able to access it with Submitter permissions
+        add_filter('user_has_cap', function ($allcaps, $cap, $args) {
+            global $_wp_menu_nopriv, $_wp_submenu_nopriv;
 
+            if (@$cap[0] == "edit_posts" && @$allcaps["edit_ideas"]) {
+                unset($_wp_menu_nopriv["edit.php"], $_wp_submenu_nopriv["edit.php"]);
+            }
+
+            return $allcaps;
+        }, 10, 3);
     }
 }
 
