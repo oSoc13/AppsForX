@@ -34,6 +34,7 @@ class WPApps_Metaboxes {
 
         add_filter('cmb_meta_boxes', [$this, 'add_event_metaboxes']);
         add_filter('cmb_meta_boxes', [$this, 'add_idea_metaboxes']);
+        add_filter('cmb_meta_boxes', [$this, 'add_app_metaboxes']);
     }
 
     function add_event_metaboxes($meta_boxes) {
@@ -41,12 +42,13 @@ class WPApps_Metaboxes {
             'title' => _x('Information', 'event-edit', WPAPPS_TRANS),
             'pages' => 'event',
             'fields' => [
-                ['id' => 'logo', 'name' => __('Event Logo', WPAPPS_TRANS), 'type' => 'image', 'repeatable' => false],
-                ['id' => 'when_start', 'name' => __('Event Start', WPAPPS_TRANS), 'type' => 'datetime_unix', 'repeatable' => false],
-                ['id' => 'when_end', 'name' => __('Event End', WPAPPS_TRANS), 'type' => 'datetime_unix', 'repeatable' => false],
-                ['id' => 'location', 'name' => __('Event Location', WPAPPS_TRANS), 'type' => 'textarea', 'repeatable' => false],
-                ['id' => 'organizer', 'name' => __('Event Organizer', WPAPPS_TRANS), 'type' => 'textarea', 'repeatable' => false],
-                ['id' => 'edition', 'name' => __('Edition', WPAPPS_TRANS), 'type' => 'text', 'repeatable' => false]
+                ['id' => 'logo', 'name' => __('Event Logo', WPAPPS_TRANS), 'type' => 'image'],
+                ['id' => 'when_start', 'name' => __('Event Start', WPAPPS_TRANS), 'type' => 'datetime_unix'],
+                ['id' => 'when_end', 'name' => __('Event End', WPAPPS_TRANS), 'type' => 'datetime_unix'],
+                ['id' => 'location', 'name' => __('Event Location', WPAPPS_TRANS), 'type' => 'textarea'],
+                ['id' => 'organizer', 'name' => __('Event Organizer', WPAPPS_TRANS), 'type' => 'textarea'],
+                ['id' => 'edition', 'name' => __('Edition', WPAPPS_TRANS), 'type' => 'text'],
+                ['id' => 'register_url', 'name' => __('Registration link', WPAPPS_TRANS), 'type' => 'text_url']
             ],
             'context' => 'side',
             'priority' => 'high'
@@ -101,8 +103,8 @@ class WPApps_Metaboxes {
                     'theme-economy' => _x('Work & Economy', 'theme', WPAPPS_TRANS),
                     'theme-lifehome' => _x('Life/Home', 'theme', WPAPPS_TRANS)
                 ]],
-                ['id' => 'homepage', 'name' => _x("Homepage", "idea-edit", WPAPPS_TRANS), 'type' => 'text_url'],
-                ['id' => 'language', 'name' => _x("Language", "idea-edit", WPAPPS_TRANS), 'type' => 'text', 'desc' => __("The language used to describe the idea.<br />Eg. 'Dutch'", WPAPPS_TRANS)]
+                ['id' => 'homepage', 'name' => __("Homepage", WPAPPS_TRANS), 'type' => 'text_url'],
+                ['id' => 'language', 'name' => __("Language", WPAPPS_TRANS), 'type' => 'text', 'desc' => __("The language used to describe the idea.<br />Eg. 'Dutch'", WPAPPS_TRANS)]
             ],
             'context' => 'side',
             'priority' => 'high'
@@ -113,6 +115,51 @@ class WPApps_Metaboxes {
             'fields' => [
                 ['id' => 'conceivers', 'name' => 'Conceivers', 'type' => 'text', 'repeatable' => true],
                 ['id' => 'contact', 'name' => 'Contact', 'type' => 'text'] // should have email/phone number? -> make abstract
+                // revisions (revises|revised|implements)
+            ]
+        ];
+        return $meta_boxes;
+    }
+
+    function add_app_metaboxes($meta_boxes) {
+        $meta_boxes[] = [
+            'title' => _x("Information", 'app-edit', WPAPPS_TRANS),
+            'pages' => 'app',
+            'fields' => [
+                ['id' => 'keyword', 'name' => __("Summary", WPAPPS_TRANS), 'type' => 'textarea'],
+                ['id' => 'homepage', 'name' => __("Homepage", WPAPPS_TRANS), 'type' => 'text_url'],
+                ['id' => 'download_url', 'name' => __("Download URL", WPAPPS_TRANS), 'type' => 'text_url'],
+                ['id' => 'license', 'name' => __("License", WPAPPS_TRANS), 'type' => 'text'] // datatype?
+            ],
+            'context' => 'side',
+            'priority' => 'high'
+        ];
+        $meta_boxes[] = [
+            'title' => __("Credits", WPAPPS_TRANS),
+            'pages' => 'app',
+            'fields' => [
+                ['id' => 'creators', 'name' => __('Creators', WPAPPS_TRANS), 'type' => 'text', 'repeatable' => true],
+                ['id' => 'designby', 'name' => __('Design by', WPAPPS_TRANS), 'type' => 'text']
+            ]
+        ];
+        $meta_boxes[] = [
+            'title' => __("Datasets & tools", WPAPPS_TRANS),
+            'pages' => 'app',
+            'fields' => [
+                ['id' => 'consumes', 'name' => 'Datasets', 'type' => 'text', 'repeatable' => true],
+                ['id' => 'tools', 'name' => 'Tools', 'type' => 'text', 'repeatable' => true]
+            ]
+        ];
+        $meta_boxes[] = [
+            'title' => _x("Platform", 'app-platform-metabox', WPAPPS_TRANS),
+            'pages' => 'app',
+            'fields' => [
+                ['id' => 'platform-title', 'name' => _x("Platform", 'app-platform-title', WPAPPS_TRANS), 'type' => 'select', 'options' => [
+                    '' => _x('Other', 'app-platform', WPAPPS_TRANS),
+                    'desktop' => _x('Desktop', 'app-platform', WPAPPS_TRANS),
+                    'mobile' => _x('Mobile', 'app-platform', WPAPPS_TRANS)
+                ]],
+                ['id' => 'platform-system', 'name' => _x("System", "app-platform", WPAPPS_TRANS), 'type' => 'text', 'desc' => 'Eg. Windows XP']
             ]
         ];
         return $meta_boxes;
