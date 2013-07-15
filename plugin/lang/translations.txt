@@ -1,0 +1,5 @@
+Translators, place your files here!
+
+wpapps-{locale}.mo
+
+http://codex.wordpress.org/I18n_for_WordPress_Developers

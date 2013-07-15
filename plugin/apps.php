@@ -174,7 +174,13 @@ class WPApps {
 
         register_activation_hook(__FILE__, function() use ($p2p) {
             if (!file_exists($p2p))
-                trigger_error(__("Some files appear to be missing. Git has to be cloned recursively!", "wpapps"), E_USER_ERROR);
+                wpapps_error(__("Some files appear to be missing. Git has to be cloned recursively!", "wpapps"));
+
+            $pfile = WPAPPS_PATH . '/posts-to-posts/core/side-post.php';
+            if (!is_writable($pfile))
+                wpapps_error(sprintf(__("Can't write to %s which has to be patched. Apply patch manually or make the file writable.", "wpapps"), $pfile));
+            else
+                file_put_contents($pfile, str_replace("->edit_posts", "->read", file_get_contents($pfile)));
         });
 
         
