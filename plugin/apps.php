@@ -32,7 +32,7 @@ defined('ABSPATH') || exit;
 
 class WPApps {
     const WPAPPS_VERSION = '1.0';
-    const WPAPPS_DBTABLE = 'wpapps';
+    const WPAPPS_DBTABLE = 'wpapps'; // nominated for removal
 
     // setvars
     var $dbtable, $options;
@@ -46,6 +46,7 @@ class WPApps {
         define('WPAPPS_DEBUG', true);
         define('WPAPPS_URL', plugin_dir_url(__FILE__));
         define('WPAPPS_PATH', plugin_dir_path(__FILE__));
+        define('WPAPPS_TRANS', 'wpapps');
 
         $this->dbtable = $wpdb->prefix . self::WPAPPS_DBTABLE;
 
@@ -84,12 +85,12 @@ class WPApps {
             });
 
             add_action('admin_menu', function() {
-                add_menu_page(__("Apps4X", "wpapps"), __("Apps4X", "wpapps"), "edit_ideas", "wpapps", [$this, "page_overview"], WPAPPS_URL . "/style/calendar16.png", (string)(27+M_PI)); // rule of pi
+                add_menu_page(__("Apps4X", WPAPPS_TRANS), __("Apps4X", WPAPPS_TRANS), "edit_ideas", "wpapps", [$this, "page_overview"], WPAPPS_URL . "/style/calendar16.png", (string)(27+M_PI)); // rule of pi
 
-                add_submenu_page("wpapps", __("Overview", "wpapps"), __("Overview", "wpapps"), "edit_ideas", "wpapps", [$this, "page_overview"]); // overwrite menu title
-                add_submenu_page("wpapps", __("Events", "wpapps"), __("Events", "wpapps"), "edit_events", "edit.php?post_type=event");
-                add_submenu_page("wpapps", __("Ideas", "wpapps"), __("Ideas", "wpapps"), "edit_ideas", "edit.php?post_type=idea");
-                add_submenu_page("wpapps", __("Apps", "wpapps"), __("Apps", "wpapps"), "edit_apps", "edit.php?post_type=app");
+                add_submenu_page("wpapps", __("Overview", WPAPPS_TRANS), __("Overview", WPAPPS_TRANS), "edit_ideas", "wpapps", [$this, "page_overview"]); // overwrite menu title
+                add_submenu_page("wpapps", __("Events", WPAPPS_TRANS), __("Events", WPAPPS_TRANS), "edit_events", "edit.php?post_type=event");
+                add_submenu_page("wpapps", __("Ideas", WPAPPS_TRANS), __("Ideas", WPAPPS_TRANS), "edit_ideas", "edit.php?post_type=idea");
+                add_submenu_page("wpapps", __("Apps", WPAPPS_TRANS), __("Apps", WPAPPS_TRANS), "edit_apps", "edit.php?post_type=app");
             });
 
             // Add admin css
@@ -126,7 +127,7 @@ class WPApps {
 
     private function setup_translations() {
         add_action('plugins_loaded', function() {
-            load_plugin_textdomain("wpapps", false, dirname(plugin_basename(__FILE__)) . "lang");
+            load_plugin_textdomain("wpapps", false, dirname(plugin_basename(__FILE__)) . "/lang/");
         });
     }
 
@@ -149,7 +150,7 @@ class WPApps {
             $foreach_tplfile($tpl_source, $tpl_dest, function($src, $dest) {
                 if (!file_exists($dest)) {
                     if (!@copy($src, $dest)) {
-                        wpapps_error(__("<strong>Couldn't copy page template.</strong><br />Please make sure that the write permissions for wp-content are correct.", "wpapps"));
+                        wpapps_error(__("<strong>Couldn't copy page template.</strong><br />Please make sure that the write permissions for wp-content are correct.", WPAPPS_TRANS));
                     }
                 }
             });
@@ -174,11 +175,11 @@ class WPApps {
 
         register_activation_hook(__FILE__, function() use ($p2p) {
             if (!file_exists($p2p))
-                wpapps_error(__("Some files appear to be missing. Git has to be cloned recursively!", "wpapps"));
+                wpapps_error(__("Some files appear to be missing. Git has to be cloned recursively!", WPAPPS_TRANS));
 
             $pfile = WPAPPS_PATH . '/posts-to-posts/core/side-post.php';
             if (!is_writable($pfile))
-                wpapps_error(sprintf(__("Can't write to %s which has to be patched. Apply patch manually or make the file writable.", "wpapps"), $pfile));
+                wpapps_error(sprintf(__("Can't write to %s which has to be patched. Apply patch manually or make the file writable.", WPAPPS_TRANS), $pfile));
             else
                 file_put_contents($pfile, str_replace("->edit_posts", "->read", file_get_contents($pfile)));
         });
