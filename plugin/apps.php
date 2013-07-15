@@ -32,12 +32,11 @@ defined('ABSPATH') || exit;
 
 class WPApps {
     const WPAPPS_VERSION = '1.0';
-    const WPAPPS_DBTABLE = 'wpapps'; // nominated for removal
 
     // setvars
-    var $dbtable, $options;
+    var $options;
     // classvars
-    var $database, $posttypes, $metaboxes;
+    var $posttypes, $metaboxes;
 
     function __construct() {
         global $wpdb;
@@ -48,12 +47,9 @@ class WPApps {
         define('WPAPPS_PATH', plugin_dir_path(__FILE__));
         define('WPAPPS_TRANS', 'wpapps');
 
-        $this->dbtable = $wpdb->prefix . self::WPAPPS_DBTABLE;
-
         $this->setup_debug();
+        $this->setup_options(); // nominated for removal
         $this->setup_translations();
-        $this->setup_options();
-
         $this->setup_roles();
         $this->setup_relationships();
         $this->setup_template();
@@ -210,7 +206,6 @@ class WPApps {
         // WP3.5+ only
         // http://stackoverflow.com/a/16656057
         // http://wordpress.stackexchange.com/a/88397
-
         register_activation_hook(__FILE__, function () {
             add_role('wpapps_submitter', 'Submitter', ["read" => true]);
 
@@ -301,5 +296,4 @@ class WPApps {
         restore_error_handler();
     }
 }
-
-new WPApps;
+new WPApps; // 300 lines!
