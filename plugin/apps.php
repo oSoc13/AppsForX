@@ -84,12 +84,12 @@ class WPApps {
             });
 
             add_action('admin_menu', function() {
-                add_menu_page("Apps4X", "Apps4X", "edit_ideas", "wpapps", [$this, "page_overview"], WPAPPS_URL . "/style/calendar16.png", (string)(27+M_PI)); // rule of pi
+                add_menu_page(__("Apps4X", "wpapps"), __("Apps4X", "wpapps"), "edit_ideas", "wpapps", [$this, "page_overview"], WPAPPS_URL . "/style/calendar16.png", (string)(27+M_PI)); // rule of pi
 
-                add_submenu_page("wpapps", "Overview", "Overview", "edit_ideas", "wpapps", [$this, "page_overview"]); // overwrite menu title
-                add_submenu_page("wpapps", "Events", "Events", "edit_events", "edit.php?post_type=event");
-                add_submenu_page("wpapps", "Ideas", "Ideas", "edit_ideas", "edit.php?post_type=idea");
-                add_submenu_page("wpapps", "Apps", "Apps", "edit_apps", "edit.php?post_type=app");
+                add_submenu_page("wpapps", __("Overview", "wpapps"), __("Overview", "wpapps"), "edit_ideas", "wpapps", [$this, "page_overview"]); // overwrite menu title
+                add_submenu_page("wpapps", __("Events", "wpapps"), __("Events", "wpapps"), "edit_events", "edit.php?post_type=event");
+                add_submenu_page("wpapps", __("Ideas", "wpapps"), __("Ideas", "wpapps"), "edit_ideas", "edit.php?post_type=idea");
+                add_submenu_page("wpapps", __("Apps", "wpapps"), __("Apps", "wpapps"), "edit_apps", "edit.php?post_type=app");
             });
 
             // Add admin css
@@ -149,9 +149,7 @@ class WPApps {
             $foreach_tplfile($tpl_source, $tpl_dest, function($src, $dest) {
                 if (!file_exists($dest)) {
                     if (!@copy($src, $dest)) {
-                        set_error_handler(function($a,$b) { die($b); });
-                        trigger_error("<strong>Couldn't copy page template.</strong><br />Please make sure that the write permissions for wp-content are correct.", E_USER_ERROR);
-                        restore_error_handler();
+                        wpapps_error(__("<strong>Couldn't copy page template.</strong><br />Please make sure that the write permissions for wp-content are correct.", "wpapps"));
                     }
                 }
             });
@@ -171,15 +169,24 @@ class WPApps {
     private function setup_relationships()
     {
         // Only include P2P if it isn't being used by the site owner yet
+        // Also check if git was properly cloned
+        $p2p = WPAPPS_PATH . '/posts-to-posts/posts-to-posts.php';
+
+        register_activation_hook(__FILE__, function() use ($p2p) {
+            if (!file_exists($p2p))
+                trigger_error(__("Some files appear to be missing. Git has to be cloned recursively!", "wpapps"), E_USER_ERROR);
+        });
+
+        
         if (!defined("P2P_TEXTDOMAIN"))
-            require WPAPPS_PATH . '/posts-to-posts/posts-to-posts.php';
+            require $p2p;
 
         add_action('p2p_init', function () {
             p2p_register_connection_type([
                 'name' => 'events_to_ideas',
                 'from' => 'event',
                 'to' => 'idea',
-                'can_create_post' => current_user_can("edit_others_ideas")
+                'can_create_post' => current_user_can("edit_others_ideas") // edit_events?
             ]);
 
             p2p_register_connection_type([
@@ -280,5 +287,12 @@ class WPApps {
             return $allcaps;
         }, 10, 3);
     }
+
+    public function wpapps_error($err) {
+        set_error_handler(function($a,$b) { die($b); });
+        trigger_error($err, E_USER_ERROR);
+        restore_error_handler();
+    }
 }
+
 new WPApps;

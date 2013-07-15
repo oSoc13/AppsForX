@@ -37,23 +37,23 @@ class WPApps_Metaboxes {
 
     function add_event_metaboxes($meta_boxes) {
         $meta_boxes[] = [
-            'title' => 'Information',
+            'title' => __('Information', 'wpapps'),
             'pages' => 'event',
             'fields' => [
-                ['id' => 'logo', 'name' => 'Event Logo', 'type' => 'image', 'repeatable' => false],
-                ['id' => 'when_start', 'name' => 'Event Start', 'type' => 'datetime_unix', 'repeatable' => false],
-                ['id' => 'when_end', 'name' => 'Event End', 'type' => 'datetime_unix', 'repeatable' => false],
-                ['id' => 'location', 'name' => 'Event Location', 'type' => 'textarea', 'repeatable' => false],
-                ['id' => 'edition', 'name' => 'Edition', 'type' => 'text', 'repeatable' => false]
+                ['id' => 'logo', 'name' => __('Event Logo', 'wpapps'), 'type' => 'image', 'repeatable' => false],
+                ['id' => 'when_start', 'name' => __('Event Start', 'wpapps'), 'type' => 'datetime_unix', 'repeatable' => false],
+                ['id' => 'when_end', 'name' => __('Event End', 'wpapps'), 'type' => 'datetime_unix', 'repeatable' => false],
+                ['id' => 'location', 'name' => __('Event Location', 'wpapps'), 'type' => 'textarea', 'repeatable' => false],
+                ['id' => 'edition', 'name' => __('Edition', 'wpapps'), 'type' => 'text', 'repeatable' => false]
             ],
             'context' => 'side',
             'priority' => 'high'
         ];
         $meta_boxes[] = [
-            'title' => 'Jury',
+            'title' => __('Jury', 'wpapps'),
             'pages' => 'event',
             'fields' => [
-                ['id' => 'jury', 'name' => "Jurylid", 'type' => 'text', 'repeatable' => true]
+                ['id' => 'jury', 'name' => __("Jurylid", 'wpapps'), 'type' => 'text', 'repeatable' => true]
             ]
         ];
         return $meta_boxes;
