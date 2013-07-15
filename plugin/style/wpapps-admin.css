@@ -16,3 +16,9 @@
 }
 
 .current-image img { width: 150px; height: 150px;}
+
+#poststuff .CMB_Group_Field h2 {
+    font-size: 12px !important;
+    margin: 0 0 8px !important;
+    font-weight: bold !important;
+}

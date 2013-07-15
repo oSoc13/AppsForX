@@ -44,6 +44,7 @@ class WPApps_Metaboxes {
                 ['id' => 'when_start', 'name' => __('Event Start', 'wpapps'), 'type' => 'datetime_unix', 'repeatable' => false],
                 ['id' => 'when_end', 'name' => __('Event End', 'wpapps'), 'type' => 'datetime_unix', 'repeatable' => false],
                 ['id' => 'location', 'name' => __('Event Location', 'wpapps'), 'type' => 'textarea', 'repeatable' => false],
+                ['id' => 'organizer', 'name' => __('Event Organizer', 'wpapps'), 'type' => 'textarea', 'repeatable' => false],
                 ['id' => 'edition', 'name' => __('Edition', 'wpapps'), 'type' => 'text', 'repeatable' => false]
             ],
             'context' => 'side',
@@ -53,7 +54,24 @@ class WPApps_Metaboxes {
             'title' => __('Jury', 'wpapps'),
             'pages' => 'event',
             'fields' => [
-                ['id' => 'jury', 'name' => __("Jurylid", 'wpapps'), 'type' => 'text', 'repeatable' => true]
+                ['id' => 'jury', 'name' => __("Jury member", 'wpapps'), 'type' => 'text', 'repeatable' => true]
+            ]
+        ];
+        $meta_boxes[] = [
+            'title' => __('Awards', 'wpapps'),
+            'pages' => 'event',
+            'fields' => [
+                ['id' => 'award', 'name' => __("Award", 'wpapps'), 'type' => 'group', 'repeatable' => true, 'fields' => [
+                    ['id' => 'award-prize', 'name' => __("Prize", 'wpapps'), 'type' => 'text'],
+                    ['id' => 'award-sponsor', 'name' => __("Sponsor", 'wpapps'), 'type' => 'text']
+                ]]
+            ]
+        ];
+        $meta_boxes[] = [
+            'title' => __('Sponsors', 'wpapps'),
+            'pages' => 'event',
+            'fields' => [
+                ['id' => 'sponsor', 'name' => __("Sponsor", 'wpapps'), 'type' => 'text', 'repeatable' => true]
             ]
         ];
         return $meta_boxes;
