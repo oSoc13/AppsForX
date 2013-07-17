@@ -1,0 +1,126 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Appsforx by oSoc13</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Appsforx</h1>
+        <p class="header">A WordPress plug-in for event organizers</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/oSoc13/AppsForX/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/oSoc13/AppsForX/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/oSoc13/AppsForX">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/oSoc13">oSoc13</a></p>
+
+
+      </header>
+      <section>
+        <h1>
+<a name="appsforx-wordpress-plugin" class="anchor" href="#appsforx-wordpress-plugin"><span class="octicon octicon-link"></span></a>AppsForX WordPress plugin</h1>
+
+<h2>
+<a name="introduction" class="anchor" href="#introduction"><span class="octicon octicon-link"></span></a>Introduction</h2>
+
+<p>This is a WordPress plugin which enables event organizers to manage their events.
+People can submit ideas to these events.</p>
+
+<p>Example: OKFN Belgium organized a hackathon. This hackathon had a jury and awards that were offered to the participants. 
+People were able to submit ideas for this hackathon, like a "GitHub Livefeed". 
+The plugin should then be able to handle the aspects of adding/editing/submitting ideas and events.</p>
+
+<p>This plugin aims to be conform the <a href="https://github.com/mmlab/apps4eu-vocabulary/">apps4eu</a> ontology.
+This means that the publicly viewable pages using this plugin will contain the corresponding RDFa tags for the vocabulary.
+It was built for the <a href="http://appsforeurope.eu/">Apps for Europe</a> project.</p>
+
+<h2>
+<a name="installation" class="anchor" href="#installation"><span class="octicon octicon-link"></span></a>Installation</h2>
+
+<h4>
+<a name="requirements" class="anchor" href="#requirements"><span class="octicon octicon-link"></span></a>Requirements</h4>
+
+<p>Your server might vaporize if these minimum requirements aren't met:</p>
+
+<ul>
+<li>PHP &gt;= 5.4 (might change in the future to have PHP 5.3 compat)</li>
+<li>WordPress &gt;= 3.5</li>
+</ul><h4>
+<a name="installation-1" class="anchor" href="#installation-1"><span class="octicon octicon-link"></span></a>Installation</h4>
+
+<p>To use the plugin, follow these steps:</p>
+
+<ul>
+<li>(Recursively!) clone the repository because it has other submodules linked in.</li>
+<li>Move the plugin/ folder inside your wp-content/plugins/ directory. </li>
+<li>In the administration area of your WordPress site, go to the Plugins section and activate the plugin.</li>
+<li>Create pages and assign the AppsForX page templates to them where you want the event list to be shown.
+<img src="http://i.imgur.com/ye9YOQc.png" alt="Event list">
+</li>
+<li>If you want users to be able to submit ideas/apps, give them at least the "Submitter" role.
+You may want to enable open user registration as well. You can find these parameters under Settings &gt; General.
+<img src="http://i.imgur.com/btTboFA.png" alt="Submitter role">
+</li>
+</ul><h4>
+<a name="troubleshooting" class="anchor" href="#troubleshooting"><span class="octicon octicon-link"></span></a>Troubleshooting</h4>
+
+<p>Please make sure that your wp-content/* folders are properly chmodded. 
+Your themes directory has to be writable for this plugin to work.</p>
+
+<p>Downloading the ZIP file won't work! GitHub doesn't automatically include the submodules.</p>
+
+<h2>
+<a name="copyright" class="anchor" href="#copyright"><span class="octicon octicon-link"></span></a>Copyright</h2>
+
+<p>Copyright: OKFN Belgium (some rights reserved)<br>
+License: GPL2</p>
+
+<pre><code>This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License, version 2, as 
+published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+</code></pre>
+
+<p>Attributions:</p>
+
+<ul>
+<li>Event icons based on designs by Designmodo, licensed under Creative Commons BY 3.0</li>
+<li>Idea icon by <a href="http://emey87.deviantart.com/">Emey87</a>, licensed under Creative Commons BY-ND 3.0</li>
+<li>App icon by <a href="http://omercetin.deviantart.com/">Omercetin</a>, licensed under Creative Commons BY-NC-ND 3.0</li>
+<li>
+<a href="https://github.com/humanmade/Custom-Meta-Boxes">Custom-Meta-Boxes</a> library by HumanMade</li>
+<li>
+<a href="https://github.com/scribu/wp-posts-to-posts">wp-posts-to-posts</a> and <a href="https://github.com/scribu/wp-scb-framework">wp-scb-framework</a> by scribu</li>
+<li>
+<a href="https://github.com/bobthecow/mustache.php">Mustache</a> library (indirectly) by bobthecow</li>
+</ul>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
