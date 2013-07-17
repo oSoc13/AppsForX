@@ -113,8 +113,8 @@ class WPApps_Metaboxes {
             'title' => _x('People', 'idea-edit', WPAPPS_TRANS),
             'pages' => 'idea',
             'fields' => [
-                ['id' => 'conceivers', 'name' => 'Conceivers', 'type' => 'text', 'repeatable' => true],
-                ['id' => 'contact', 'name' => 'Contact', 'type' => 'text'] // should have email/phone number? -> make abstract
+                ['id' => 'conceivers', 'name' => __('Conceivers', WPAPPS_TRANS), 'type' => 'text', 'repeatable' => true],
+                ['id' => 'contact', 'name' => __('Contact', WPAPPS_TRANS), 'type' => 'text'] // should have email/phone number? -> make abstract
                 // revisions (revises|revised|implements)
             ]
         ];
@@ -146,8 +146,8 @@ class WPApps_Metaboxes {
             'title' => __("Datasets & tools", WPAPPS_TRANS),
             'pages' => 'app',
             'fields' => [
-                ['id' => 'consumes', 'name' => 'Datasets', 'type' => 'text', 'repeatable' => true],
-                ['id' => 'tools', 'name' => 'Tools', 'type' => 'text', 'repeatable' => true]
+                ['id' => 'consumes', 'name' => __('Datasets', WPAPPS_TRANS), 'type' => 'text', 'repeatable' => true],
+                ['id' => 'tools', 'name' => __('Tools', WPAPPS_TRANS), 'type' => 'text', 'repeatable' => true]
             ]
         ];
         $meta_boxes[] = [
@@ -159,7 +159,7 @@ class WPApps_Metaboxes {
                     'desktop' => _x('Desktop', 'app-platform', WPAPPS_TRANS),
                     'mobile' => _x('Mobile', 'app-platform', WPAPPS_TRANS)
                 ]],
-                ['id' => 'platform-system', 'name' => _x("System", "app-platform", WPAPPS_TRANS), 'type' => 'text', 'desc' => 'Eg. Windows XP']
+                ['id' => 'platform-system', 'name' => _x("System", "app-platform", WPAPPS_TRANS), 'type' => 'text', 'desc' => __('Eg. Windows XP', WPAPPS_TRANS)]
             ]
         ];
         return $meta_boxes;
