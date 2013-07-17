@@ -11,7 +11,7 @@ Example: OKFN Belgium organized a hackathon. This hackathon had a jury and award
 People were able to submit ideas for this hackathon, like a "GitHub Livefeed". 
 The plugin should then be able to handle the aspects of adding/editing/submitting ideas and events.
 
-This plugin aims to be conform the [Apps4X](https://github.com/mmlab/apps4eu-vocabulary/) ontology.
+This plugin aims to be conform the [apps4eu](https://github.com/mmlab/apps4eu-vocabulary/) ontology.
 This means that the publicly viewable pages using this plugin will contain the corresponding RDFa tags for the vocabulary.
 It was built for the [Apps for Europe](http://appsforeurope.eu/) project.
 
@@ -21,8 +21,8 @@ Installation
 #### Requirements
 
 Your server might vaporize if these minimum requirements aren't met:
- * PHP > 5.4 (might change in the future to have PHP 5.3 compat)
- * WordPress > 3.5
+ * PHP >= 5.4 (might change in the future to have PHP 5.3 compat)
+ * WordPress >= 3.5
 
 #### Installation
 

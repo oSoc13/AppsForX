@@ -39,10 +39,8 @@ class WPApps {
     var $posttypes, $metaboxes;
 
     function __construct() {
-        global $wpdb;
-
         define('IN_WPAPPS', 1);
-        define('WPAPPS_DEBUG', true);
+        define('WPAPPS_DEBUG', false);
         define('WPAPPS_URL', plugin_dir_url(__FILE__));
         define('WPAPPS_PATH', plugin_dir_path(__FILE__));
         define('WPAPPS_TRANS', 'wpapps');
@@ -113,14 +111,6 @@ class WPApps {
         $this->options = get_option("wpapps_options", $defaults);
     }
 
-    private function setup_debug() {
-        restore_error_handler();
-        error_reporting(E_ALL);
-        ini_set('error_reporting', E_ALL);
-        ini_set('html_errors',TRUE);
-        ini_set('display_errors',TRUE);
-    }
-
     private function setup_translations() {
         add_action('plugins_loaded', function() {
             load_plugin_textdomain("wpapps", false, dirname(plugin_basename(__FILE__)) . "/lang/");
@@ -144,11 +134,8 @@ class WPApps {
 
         register_activation_hook(__FILE__, function() use ($foreach_tplfile, $tpl_source, $tpl_dest) {
             $foreach_tplfile($tpl_source, $tpl_dest, function($src, $dest) {
-                if (!file_exists($dest)) {
-                    if (!@copy($src, $dest)) {
-                        wpapps_error(__("<strong>Couldn't copy page template.</strong><br />Please make sure that the write permissions for wp-content are correct.", WPAPPS_TRANS));
-                    }
-                }
+                if (!file_exists($dest) && !@copy($src, $dest))
+                    wpapps_error(__("<strong>Couldn't copy page template.</strong><br />Please make sure that the write permissions for wp-content are correct.", WPAPPS_TRANS));
             });
         });
 
@@ -290,10 +277,21 @@ class WPApps {
         }, 10, 3);
     }
 
+    private function setup_debug() {
+        if (WPAPPS_DEBUG) {
+            restore_error_handler();
+            error_reporting(E_ALL);
+            ini_set('error_reporting', E_ALL);
+            ini_set('html_errors',TRUE);
+            ini_set('display_errors',TRUE);
+        }
+    }
+
     public function wpapps_error($err) {
         set_error_handler(function($a,$b) { die($b); });
         trigger_error($err, E_USER_ERROR);
         restore_error_handler();
     }
 }
+
 new WPApps; // 300 lines!
