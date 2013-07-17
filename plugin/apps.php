@@ -40,7 +40,7 @@ class WPApps {
 
     function __construct() {
         define('IN_WPAPPS', 1);
-        define('WPAPPS_DEBUG', false);
+        define('WPAPPS_DEBUG', true);
         define('WPAPPS_URL', plugin_dir_url(__FILE__));
         define('WPAPPS_PATH', plugin_dir_path(__FILE__));
         define('WPAPPS_TRANS', 'wpapps');
@@ -117,11 +117,8 @@ class WPApps {
         });
     }
 
-    // copy all files over to the themes directory on activation
-    // also remove them on plugin deactivation... if they weren't modified by the user
-    // Future: perhaps use symlinks... linux|windows >6.1
     private function setup_template() {
-        $tpl_source = WPAPPS_PATH . '/tpls';
+/*        $tpl_source = WPAPPS_PATH . '/tpls';
         $tpl_dest = get_template_directory();
 
         // A function declared in a private function inside a class, becomes a global function...
@@ -147,7 +144,23 @@ class WPApps {
                     @unlink($dest.".old");
                 }
             });
-        });
+        });*/
+
+        add_filter('template_include', function($template_path) {
+            $post_type = get_post_type();
+            if (in_array($post_type, ['event', 'idea', 'app'])) {
+                $type = is_single() ? "single" : (is_archive() ? "archive" : false);
+                if ($type) {
+                    $tplfile = "$type-$post_type.php";
+                    if ($theme_file = locate_template([$tplfile])) {
+                        $template_path = $theme_file;
+                    } else {
+                        $template_path = WPAPPS_PATH . '/tpls/' . $tplfile;
+                    }
+                }
+            }
+            return $template_path;
+        }, 1);
     }
 
     private function setup_relationships()
