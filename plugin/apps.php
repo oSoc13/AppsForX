@@ -119,7 +119,7 @@ class WPApps {
     }
 
     private function setup_template() {
-        require_once WPAPPS_PATH . '/cpt-archive-menu/cpt-in-navmenu.php';
+        require_once WPAPPS_PATH . '/lib/cpt-archive-menu/cpt-in-navmenu.php';
 
         add_filter('template_include', function($template_path) {
             $post_type = get_post_type();
@@ -142,13 +142,13 @@ class WPApps {
     {
         // Only include P2P if it isn't being used by the site owner yet
         // Also check if git was properly cloned
-        $p2p = WPAPPS_PATH . '/posts-to-posts/posts-to-posts.php';
+        $p2p = WPAPPS_PATH . '/lib/posts-to-posts/posts-to-posts.php';
 
         register_activation_hook(__FILE__, function() use ($p2p) {
             if (!file_exists($p2p))
                 wpapps_error(__("Some files appear to be missing. Git has to be cloned recursively!", WPAPPS_TRANS));
 
-            $pfile = WPAPPS_PATH . '/posts-to-posts/core/side-post.php';
+            $pfile = WPAPPS_PATH . '/lib/posts-to-posts/core/side-post.php';
             if (!is_writable($pfile))
                 wpapps_error(sprintf(__("Can't write to %s which has to be patched. Apply patch manually or make the file writable.", WPAPPS_TRANS), $pfile));
             else

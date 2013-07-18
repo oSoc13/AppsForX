@@ -27,7 +27,7 @@ class WPApps_Metaboxes {
 
         // Use nice custom meta boxes by HumanMade
         if (!defined('CMB_PATH'))
-            require_once WPAPPS_PATH . "/cmb/custom-meta-boxes.php";
+            require_once WPAPPS_PATH . "/lib/cmb/custom-meta-boxes.php";
 
 //        add_action('add_meta_boxes', [$this, 'add_meta_box']);
 //        add_action('post_updated', [$this, 'save']);
@@ -57,7 +57,10 @@ class WPApps_Metaboxes {
             'title' => __('Jury', WPAPPS_TRANS),
             'pages' => 'event',
             'fields' => [
-                ['id' => 'jury', 'name' => __("Jury member", WPAPPS_TRANS), 'type' => 'text', 'repeatable' => true]
+                ['id' => 'jury', 'name' => __("Jury member", WPAPPS_TRANS), 'type' => 'group', 'repeatable' => true, 'fields' => [
+                    ['id' => 'agent-name', 'name' => __('Name', WPAPPS_TRANS), 'type' => 'text'],
+                    ['id' => 'agent-surname', 'name' => __('Surname', WPAPPS_TRANS), 'type' => 'text']
+                ]]
             ]
         ];
         $meta_boxes[] = [
@@ -65,8 +68,8 @@ class WPApps_Metaboxes {
             'pages' => 'event',
             'fields' => [
                 ['id' => 'award', 'name' => __("Award", WPAPPS_TRANS), 'type' => 'group', 'repeatable' => true, 'fields' => [
-                    ['id' => 'award-prize', 'name' => __("Prize", WPAPPS_TRANS), 'type' => 'text'],
-                    ['id' => 'award-sponsor', 'name' => __("Sponsor", WPAPPS_TRANS), 'type' => 'text']
+                    ['id' => 'award-prize', 'name' => __("Prize", WPAPPS_TRANS), 'type' => 'text', 'cols' => 2],
+                    ['id' => 'award-sponsor', 'name' => __("Sponsor", WPAPPS_TRANS), 'type' => 'text', 'cols' => 2]
                 ]]
             ]
         ];
