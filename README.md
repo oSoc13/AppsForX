@@ -1,6 +1,8 @@
 AppsForX WordPress plugin
 =========================
 
+![Apps4X WordPress](../master/meta/wplogo.png)
+
 Introduction
 ------------
 
@@ -27,14 +29,16 @@ Your server might vaporize if these minimum requirements aren't met:
 #### Installation
 
 To use the plugin, follow these steps:
- * (Recursively!) clone the repository because it has other submodules linked in.
- * Move the plugin/ folder inside your wp-content/plugins/ directory. 
- * In the administration area of your WordPress site, go to the Plugins section and activate the plugin.
- * Create pages and assign the AppsForX page templates to them where you want the event list to be shown.
-   ![Event list](http://i.imgur.com/ye9YOQc.png)
+ * Download the zip file from here. (NOT from the github repository. [Why?](https://github.com/oSoc13/AppsForX/issues/23))
+ * In the administration area of your WordPress site, go to the Plugins section, upload the zip file, and activate.
+   ![Apps4X WordPress](../master/meta/install.png)
+ * You can now add new events, ideas and apps directly from the administration area
  * If you want users to be able to submit ideas/apps, give them at least the "Submitter" role.
    You may want to enable open user registration as well. You can find these parameters under Settings > General.
    ![Submitter role](http://i.imgur.com/btTboFA.png)
+ * You can link from your theme files to the event pages. 
+   If you want event/ideas/app archives to show up in your main WordPress navigation menu, you can make use of the [Custom Post Type's Archive in WP Nav Menu](http://wordpress.org/plugins/add-custom-post-types-archive-to-nav-menus/) plugin.
+   Go to Appearance > Menus > Add a new menu, then assign it to the primary location.
 
 #### Troubleshooting
 
@@ -63,9 +67,11 @@ License: GPL2
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 Attributions:
- * Event icons based on designs by Designmodo, licensed under Creative Commons BY 3.0
- * Idea icon by [Emey87](http://emey87.deviantart.com/), licensed under Creative Commons BY-ND 3.0
- * App icon by [Omercetin](http://omercetin.deviantart.com/), licensed under Creative Commons BY-NC-ND 3.0
  * [Custom-Meta-Boxes](https://github.com/humanmade/Custom-Meta-Boxes) library by HumanMade
  * [wp-posts-to-posts](https://github.com/scribu/wp-posts-to-posts) and [wp-scb-framework](https://github.com/scribu/wp-scb-framework) by scribu
  * [Mustache](https://github.com/bobthecow/mustache.php) library (indirectly) by bobthecow
+ * Logo based on the Apps4EU logo and a logo by [Webdesigner Depot](http://www.webdesignerdepot.com/)
+ * Event icons based on designs by Designmodo, licensed under Creative Commons BY 3.0
+ * Idea icon by [Emey87](http://emey87.deviantart.com/), licensed under Creative Commons BY-ND 3.0
+ * App icon by [Omercetin](http://omercetin.deviantart.com/), licensed under Creative Commons BY-NC-ND 3.0
+
