@@ -1,0 +1,6 @@
+name: AppsForX
+markdown: redcarpet
+pygments: true
+safe: true
+lsi: false
+pygments: true
