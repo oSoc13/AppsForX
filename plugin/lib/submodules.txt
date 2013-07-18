@@ -1,0 +1,7 @@
+We're currently using 3 submodules directly:
+
+humanmade/Custom-Meta-Boxes
+AllStruck/custom-post-type-archive-menu
+scribu/wp-posts-to-posts/
+
+If these folders are empty, you should clone the git repository recursively! :)
