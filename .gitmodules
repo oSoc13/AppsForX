@@ -4,3 +4,6 @@
 [submodule "plugin/cmb"]
 	path = plugin/cmb
 	url = https://github.com/humanmade/Custom-Meta-Boxes.git
+[submodule "plugin/cpt-archive-menu"]
+	path = plugin/cpt-archive-menu
+	url = https://github.com/AllStruck/custom-post-type-archive-menu.git

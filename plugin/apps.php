@@ -40,7 +40,7 @@ class WPApps {
 
     function __construct() {
         define('IN_WPAPPS', 1);
-        define('WPAPPS_DEBUG', true);
+        define('WPAPPS_DEBUG', false);
         define('WPAPPS_URL', plugin_dir_url(__FILE__));
         define('WPAPPS_PATH', plugin_dir_path(__FILE__));
         define('WPAPPS_TRANS', 'wpapps');
@@ -100,7 +100,9 @@ class WPApps {
         }
     }
 
-    public function page_overview() {} // ToDo
+    public function page_overview() { // ToDo
+        echo "<h2>WiP</h2><p>This could/should show a nice overview of pending submissions.</p>";
+    }
 
     private function setup_options() {
         $defaults = [
@@ -117,6 +119,8 @@ class WPApps {
     }
 
     private function setup_template() {
+        require_once WPAPPS_PATH . '/cpt-archive-menu/cpt-in-navmenu.php';
+
         add_filter('template_include', function($template_path) {
             $post_type = get_post_type();
             if (in_array($post_type, ['event', 'idea', 'app'])) {
