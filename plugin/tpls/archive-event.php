@@ -4,9 +4,7 @@
  * Description: A page template for the Apps4X template
  */
 
-
 get_header();
-
 // Nice RDFa example: http://rdfa.info/play/
 
 ?>
@@ -16,7 +14,6 @@ get_header();
             <?php while ( have_posts() ) : the_post(); ?>
                 <?php
                     $meta = get_post_meta( get_the_ID() );
-
                     $connected = new WP_Query( array(
                         'connected_type' => 'events_to_ideas',
                         'connected_items' => $post,
@@ -37,12 +34,24 @@ get_header();
                         </h1>
                     </header><!-- .entry-header -->
 
-                    <div style="float:left; margin: 0 25px 25px 0">
+                    <div style="float:left; margin: 0 25px 25px 0" rel="foaf:logo">
                         <?php echo wp_get_attachment_image($meta['logo'][0]); ?>
                     </div>
                     <div class="entry-content" style="float:left">
-                        <p><strong>Starts:</strong> <?php echo date("F j, Y - H:i", $meta['when_start'][0]) ?><br />
-                        <strong>Ends:</strong>  <?php echo date("F j, Y - H:i", $meta['when_end'][0]) ?></p>
+                        <p>
+                            <strong>Location:</strong>
+                            <span property="dc:spatial" instanceof="dc:Location"><?php echo esc_attr($meta['location'][0]); ?></span>
+                        </p>
+                        <p>
+                            <strong>Starts:</strong>
+                            <meta property="schema:startDate" content="<?php echo date('Y-m-d\TH:i:s', $meta['when_start'][0]); ?>" />
+                            <?php echo date("F j, Y - H:i", $meta['when_start'][0]) ?><br />
+
+                            <strong>Ends:</strong>
+                            <meta property="schema:endDate" content="<?php echo date('Y-m-d\TH:i:s', $meta['when_end'][0]); ?>" />
+                            <?php echo date("F j, Y - H:i", $meta['when_end'][0]) ?>
+                        </p>
+
                         <?php the_content( __( 'Continue reading <span class="meta-nav">&rarr;</span>', 'wpapps' ) ); ?>
                         <!-- Shouldn't this be at the very very bottom? -->
                         <?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'wpapps' ), 'after' => '</div>' ) ); ?>
