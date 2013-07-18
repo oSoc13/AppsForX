@@ -38,6 +38,9 @@ class WPApps {
     // classvars
     var $posttypes, $metaboxes;
 
+    /**
+     * Initializes constants and calls setup functions
+     */
     function __construct() {
         define('IN_WPAPPS', 1);
         define('WPAPPS_DEBUG', false);
@@ -46,7 +49,7 @@ class WPApps {
         define('WPAPPS_TRANS', 'wpapps');
 
         $this->setup_debug();
-        $this->setup_options(); // nominated for removal
+        $this->setup_options(); // not used atm
         $this->setup_translations();
         $this->setup_roles();
         $this->setup_relationships();
@@ -60,12 +63,14 @@ class WPApps {
         $this->metaboxes = new WPApps_Metaboxes($this);
     }
 
-    function setup_hooks() {  // ToDo: separate?
-        if (is_admin()) { // backend
-            // Add admin menu hook
-
-            // maintain highlighting, the hard way
-            // not sure if this is the correct action to hook into, but it seems to work
+    /**
+     * These hooks make sure that an admin menu is displayed
+     * Also takes care of the necessary CSS includes
+     */
+    function setup_hooks() {
+        if (is_admin()) {
+            // When editing an idea/event/app, the menu loses its highlighting
+            // By resetting the $parent_file and $submenu_file variable, we can maintain the menu highlight
             add_action('admin_head', function() {
                 global $submenu_file, $parent_file;
                 $types = ["event", "idea", "app"];
@@ -77,6 +82,7 @@ class WPApps {
                 }
             });
 
+            // Add the menu/submenu items: Apps4X > Overview|Events|Ideas|Apps
             add_action('admin_menu', function() {
                 add_menu_page(__("Apps4X", WPAPPS_TRANS), __("Apps4X", WPAPPS_TRANS), "edit_ideas", "wpapps", [$this, "page_overview"], WPAPPS_URL . "/style/calendar16.png", (string)(27+M_PI)); // rule of pi
 
@@ -92,7 +98,8 @@ class WPApps {
                 wp_enqueue_style('wpapps-admin');
             });
         }
-        else { // frontend
+        else {
+            // Add frontend css
             add_action('wp_print_styles', function() {
                 wp_register_style('wpapps', WPAPPS_URL.'/style/wpapps.css');
                 wp_enqueue_style('wpapps');
@@ -100,10 +107,16 @@ class WPApps {
         }
     }
 
+    /**
+     * This function can display the overview page, could also be a require()
+     */
     public function page_overview() { // ToDo
         echo "<h2>WiP</h2><p>This could/should show a nice overview of pending submissions.</p>";
     }
 
+    /**
+     * We can save user options to the database, but it isn't used at the moment
+     */
     private function setup_options() {
         $defaults = [
             "plugin_version" => 0
@@ -112,12 +125,20 @@ class WPApps {
         $this->options = get_option("wpapps_options", $defaults);
     }
 
+    /**
+     * Loads translations from the /lang/ directory
+     * There aren't any translations yet, but the functionality is there
+     */
     private function setup_translations() {
         add_action('plugins_loaded', function() {
             load_plugin_textdomain("wpapps", false, dirname(plugin_basename(__FILE__)) . "/lang/");
         });
     }
 
+    /**
+     * Include template files for the event|idea|app archive and single page views
+     * Also adds a metabox to Appearance > Menus to display an archive link in the menu
+     */
     private function setup_template() {
         require_once WPAPPS_PATH . '/lib/cpt-archive-menu/cpt-in-navmenu.php';
 
@@ -138,6 +159,9 @@ class WPApps {
         }, 1);
     }
 
+    /**
+     * Adds a metabox to event|ideas|apps to link them together
+     */
     private function setup_relationships()
     {
         // Only include P2P if it isn't being used by the site owner yet
@@ -175,6 +199,10 @@ class WPApps {
         });
     }
 
+    /**
+     * Sets up roles and capabilities
+     * We have a special role (Submitter) that can do nothing except make submissions
+     */
     private function setup_roles()
     {
         // WP3.5+ only
@@ -251,7 +279,7 @@ class WPApps {
             remove_role('wpapps_submitter');
         });
 
-        // Dirty hack to work around the edit_posts capability
+        // Dirty hack to work around the edit_posts capability (issue #16)
         // When we're on post-new.php, we manually reset the edit.php permissions
         // that way, edit.php won't show up in the menu, but we'll be able to access it with Submitter permissions
         add_filter('user_has_cap', function ($allcaps, $cap, $args) {
@@ -264,6 +292,9 @@ class WPApps {
         }, 10, 3);
     }
 
+    /**
+     * Setup debugging
+     */
     private function setup_debug() {
         if (WPAPPS_DEBUG) {
             restore_error_handler();
@@ -274,6 +305,9 @@ class WPApps {
         }
     }
 
+    /**
+     * Fail nicely
+     */
     public function wpapps_error($err) {
         set_error_handler(function($a,$b) { die($b); });
         trigger_error($err, E_USER_ERROR);
