@@ -25,6 +25,7 @@ get_header();
                     odapps: http://apps4eu.eu/odapps/voc#
                     foaf: http://xmlns.com/foaf/0.1/
                     typeof="odapps:AppConcept">
+                    <meta property="dc:language" instanceof="dc:LinguisticSystem" content="<?php echo esc_attr($meta['language'][0]); ?>" />
                     <header class="entry-header">
                         <h1 class="entry-title" property="dc:title">
                             <a href="<?php the_permalink(); ?>" title="<?php echo esc_attr( sprintf( __( 'Permalink to %s', 'wpapps' ), the_title_attribute( 'echo=0' ) ) ); ?>" rel="bookmark">
@@ -42,42 +43,21 @@ get_header();
 
                     <div class="entry-content" style="clear:both">
                         <p>
-                            <strong>Organizer:</strong>
-                            <span property="apps4eu:organizer" instanceof="foaf:Agent"><?php echo esc_attr($meta['organizer'][0]); ?></span>
-                        </p>
-                        <p>
-                        <div style="float:left"><strong>Sponsors:</strong>&nbsp;</div>
+                        <div style="float:left"><strong>Conceivers:</strong>&nbsp;</div>
                         <div style="float:left">
-                            <?php foreach((array)$meta['sponsor'] as $sponsor) { ?>
-                                <span property="apps4eu:sponsor" instanceof="foaf:Agent"><?php echo esc_attr($sponsor); ?></span><br />
+                            <?php foreach((array)$meta['conceivers'] as $conceiver) { ?>
+                                <span property="odapps:conceived" instanceof="foaf:Agent"><?php echo esc_attr($conceiver); ?></span><br />
                             <?php } ?>
                         </div>
                         <br style="clear:both" />
                         </p>
                         <p>
-                        <div style="float:left"><strong>Jury:</strong>&nbsp;</div>
-                        <div style="float:left">
-                            <?php foreach((array)$meta['jury'] as $jury) {
-                                $jury = unserialize($jury);
-                                list($surname, $lastname) = array(esc_attr($jury['agent-surname']), esc_attr($jury['agent-name']));
-                                ?>
-                                <span property="apps4eu:sponsor" instanceof="foaf:Agent"><?php echo $surname.' '.$lastname; ?></span><br />
-                            <?php } ?>
-                        </div>
-                        <br style="clear:both" />
+                            <strong>Contact:</strong>
+                            <span property="odapps:contact" instanceof="foaf:Agent"><?php echo esc_attr($meta['contact'][0]); ?></span>
                         </p>
                         <p>
-                        <div style="float:left"><strong>Awards:</strong>&nbsp;</div>
-                        <div style="float:left">
-                            <?php foreach((array)$meta['award'] as $award) {
-                                $award = unserialize($award);
-                                list($prize, $sponsor) = array(esc_attr($award['award-prize']), esc_attr($award['award-sponsor']));
-                                ?>
-                                <span property="apps4eu:prize"><?php echo $prize; ?></span> offered by
-                                <span property="apps4eu:sponsor" instanceof="foaf:Agent"><?php echo $sponsor; ?></span><br />
-                            <?php } ?>
-                        </div>
-                        <br style="clear:both" />
+                            <strong>Homepage:</strong>
+                            <a property="foaf:homepage" instanceof="schema:WebPage" href="<?php echo esc_attr($meta['homepage'][0]); ?>">Visit homepage</a>
                         </p>
                     </div>
                     <hr />

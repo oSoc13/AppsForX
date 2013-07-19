@@ -24,6 +24,8 @@ get_header();
                     apps4eu: http://apps4eu.eu/voc#
                     odapps: http://apps4eu.eu/odapps/voc#
                     foaf: http://xmlns.com/foaf/0.1/
+                    dc: http://purl.org/dc/terms/
+                    schema: http://schema.org/
                     typeof="apps4eu:CocreationEvent">
                     <header class="entry-header">
                         <h1 class="entry-title" property="dc:title">
