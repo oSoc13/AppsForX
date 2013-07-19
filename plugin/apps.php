@@ -59,6 +59,7 @@ class WPApps {
         $this->setup_relationships();
         $this->setup_template();
         $this->setup_hooks();
+        $this->setup_shortcodes();
 
         require_once WPAPPS_PATH . '/posttypes.php';
         require_once WPAPPS_PATH . '/metaboxes.php';
@@ -316,6 +317,14 @@ class WPApps {
         set_error_handler(function($a,$b) { die($b); });
         trigger_error($err, E_USER_ERROR);
         restore_error_handler();
+    }
+
+    /**
+     * Stub to show evenlist using shortcode (for widgets)
+     */
+    private function setup_shortcodes()
+    {
+        add_shortcode('eventlist', function() { echo "returns nothing yet."; });
     }
 }
 
