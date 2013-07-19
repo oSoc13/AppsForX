@@ -23,6 +23,7 @@ Installation
 #### Requirements
 
 Your server might vaporize if these minimum requirements aren't met:
+
  * PHP >= 5.4 (might change in the future to have PHP 5.3 compat)
  * WordPress >= 3.5
 
@@ -33,18 +34,16 @@ Plugin zip file: [appsforx.zip](http://osoc13.github.io/AppsForX/appsforx.zip).
 #### Installation
 
 To use the plugin, follow these steps:
- * In the administration area of your WordPress site, go to the Plugins section, upload the zip file, and activate.
-   
+
+ * In the administration area of your WordPress site, go to the Plugins section, upload the zip file, and activate.    
    ![Apps4X WordPress](../master/meta/install.png)
  * You can now add new events, ideas and apps directly from the administration area
  * If you want users to be able to submit ideas/apps, give them at least the "Submitter" role.
-   You may want to enable open user registration as well. You can find these parameters under Settings > General.
-
+   You may want to enable open user registration as well. You can find these parameters under Settings > General.    
    ![Submitter role](http://i.imgur.com/btTboFA.png)
  * You can link from your theme files to the event pages. 
    If you want event/ideas/app archives to show up in your main WordPress navigation menu,
-   go to Appearance > Menus > Add a new menu, choose the wanted archive, then assign the menu to the primary location.
-
+   go to Appearance > Menus > Add a new menu, choose the wanted archive, then assign the menu to the primary location.    
    ![Navigation menu](../master/meta/menus.png)
 
 #### Troubleshooting
@@ -70,7 +69,8 @@ License: GPL2
     along with this program; if not, write to the Free Software
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
-Attributions:
+#### Attributions
+
  * [Custom-Meta-Boxes](https://github.com/humanmade/Custom-Meta-Boxes) library by HumanMade
  * [wp-posts-to-posts](https://github.com/scribu/wp-posts-to-posts) and [wp-scb-framework](https://github.com/scribu/wp-scb-framework) by scribu
  * [custom-post-type-archive-menu](https://github.com/AllStruck/custom-post-type-archive-menu) library by AllStruck
