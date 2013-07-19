@@ -26,10 +26,13 @@ Your server might vaporize if these minimum requirements aren't met:
  * PHP >= 5.4 (might change in the future to have PHP 5.3 compat)
  * WordPress >= 3.5
 
+#### Download
+
+Plugin zip file: [appsforx.zip](http://osoc13.github.io/AppsForX/appsforx.zip).
+
 #### Installation
 
 To use the plugin, follow these steps:
- * Download the zip file from here. (NOT from the github repository. [Why?](https://github.com/oSoc13/AppsForX/issues/23))
  * In the administration area of your WordPress site, go to the Plugins section, upload the zip file, and activate.
    
    ![Apps4X WordPress](../master/meta/install.png)
@@ -46,10 +49,7 @@ To use the plugin, follow these steps:
 
 #### Troubleshooting
 
-Please make sure that your wp-content/* folders are properly chmodded. 
-Your themes directory has to be writable for this plugin to work.
-
-Downloading the ZIP file won't work! GitHub doesn't automatically include the submodules.
+Please make sure that your wp-content/* folders are properly chmodded.
 
 Copyright
 ---------
