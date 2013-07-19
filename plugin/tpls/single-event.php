@@ -1,30 +1,26 @@
 <?php
 /*
- * Template Name: Apps4X Event List
+ * Template Name: Apps4X Single Event
  * Description: A page template for the Apps4X template
  */
 
-
 get_header();
-
-// Nice RDFa example: http://rdfa.info/play/
 
 ?>
     <div id="primary" class="site-content">
         <div id="content" role="main">
             <?php if (have_posts()) : ?>
-            <?php while ( have_posts() ) : the_post(); ?>
-                <?php
+                <?php while ( have_posts() ) : the_post(); ?>
+                    <?php
                     $meta = get_post_meta( get_the_ID() );
-
                     $connected = new WP_Query( array(
                         'connected_type' => 'events_to_ideas',
                         'connected_items' => $post,
                         'nopaging' => true,
                     ) );
-                ?>
-                <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>
-                    prefix="
+                    ?>
+                    <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>
+                             prefix="
                     apps4eu: http://apps4eu.eu/voc#
                     odapps: http://apps4eu.eu/odapps/voc#
                     foaf: http://xmlns.com/foaf/0.1/
@@ -37,40 +33,88 @@ get_header();
                         </h1>
                     </header><!-- .entry-header -->
 
-                    <div style="float:left; margin: 0 25px 25px 0">
+                    <div style="float:left; margin: 0 25px 25px 0" rel="foaf:logo">
                         <?php echo wp_get_attachment_image($meta['logo'][0]); ?>
                     </div>
                     <div class="entry-content" style="float:left">
-                        <p><strong>Starts:</strong> <?php echo date("F j, Y - H:i", $meta['when_start'][0]) ?><br />
-                        <strong>Ends:</strong>  <?php echo date("F j, Y - H:i", $meta['when_end'][0]) ?></p>
-                        <?php the_content( __( 'Continue reading <span class="meta-nav">&rarr;</span>', 'wpapps' ) ); ?>
-                        <!-- Shouldn't this be at the very very bottom? -->
-                        <?php wp_link_pages( array( 'before' => '<div class="page-links">' . __( 'Pages:', 'wpapps' ), 'after' => '</div>' ) ); ?>
+                        <p>
+                            <strong>Location:</strong>
+                            <span property="dc:spatial" instanceof="dc:Location"><?php echo esc_attr($meta['location'][0]); ?></span>
+                        </p>
+                        <p>
+                            <strong>Starts:</strong>
+                            <meta property="schema:startDate" content="<?php echo date('Y-m-d\TH:i:s', $meta['when_start'][0]); ?>" />
+                            <?php echo date("F j, Y - H:i", $meta['when_start'][0]) ?><br />
+
+                            <strong>Ends:</strong>
+                            <meta property="schema:endDate" content="<?php echo date('Y-m-d\TH:i:s', $meta['when_end'][0]); ?>" />
+                            <?php echo date("F j, Y - H:i", $meta['when_end'][0]) ?>
+                        </p>
+<!--                        <p>-->
+<!--                            <strong>Edition:</strong>-->
+<!--                            <span property="apps4eu:edition">--><?php //echo esc_attr($meta['edition'][0]); ?><!--</span>-->
+<!--                        </p>-->
+                        <a property="apps4eu:registration" href="<?php echo esc_attr($meta['register_url'][0]); ?>">Register for this event</a>
                     </div><!-- .entry-content -->
 
-                    <?php if ( $connected->have_posts() ) : ?>
                     <div class="entry-content" style="clear:both">
-                        <h5>Ideas</h5>
-                        <ul>
-                            <?php while ( $connected->have_posts() ) : $connected->the_post(); ?>
-                                <li><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></li>
-                            <?php endwhile; ?>
-                        </ul>
+                        <p>
+                            <strong>Organizer:</strong>
+                            <span property="apps4eu:organizer" instanceof="foaf:Agent"><?php echo esc_attr($meta['organizer'][0]); ?></span>
+                        </p>
+                        <p>
+                            <div style="float:left"><strong>Sponsors:</strong>&nbsp;</div>
+                            <div style="float:left">
+                                <?php foreach((array)$meta['sponsor'] as $sponsor) { ?>
+                                    <span property="apps4eu:sponsor" instanceof="foaf:Agent"><?php echo esc_attr($sponsor); ?></span><br />
+                                <?php } ?>
+                            </div>
+                            <br style="clear:both" />
+                        </p>
+                        <p>
+                            <div style="float:left"><strong>Jury:</strong>&nbsp;</div>
+                            <div style="float:left">
+                                <?php foreach((array)$meta['jury'] as $jury) {
+                                    $jury = unserialize($jury);
+                                    list($surname, $lastname) = array(esc_attr($jury['agent-surname']), esc_attr($jury['agent-name']));
+                                ?>
+                                    <span property="apps4eu:sponsor" instanceof="foaf:Agent"><?php echo $surname.' '.$lastname; ?></span><br />
+                                <?php } ?>
+                            </div>
+                            <br style="clear:both" />
+                        </p>
+                        <p>
+                        <div style="float:left"><strong>Awards:</strong>&nbsp;</div>
+                        <div style="float:left">
+                            <?php foreach((array)$meta['award'] as $award) {
+                                $award = unserialize($award);
+                                list($prize, $sponsor) = array(esc_attr($award['award-prize']), esc_attr($award['award-sponsor']));
+                                ?>
+                                <span property="apps4eu:prize"><?php echo $prize; ?></span> offered by
+                                <span property="apps4eu:sponsor" instanceof="foaf:Agent"><?php echo $sponsor; ?></span><br />
+                            <?php } ?>
+                        </div>
+                        <br style="clear:both" />
+                        </p>
                     </div>
+                    <hr />
+                    <?php if ( $connected->have_posts() ) : ?>
+                        <div class="entry-content">
+                            <h3>Ideas</h3>
+                            <ul>
+                                <?php while ( $connected->have_posts() ) : $connected->the_post(); ?>
+                                    <li><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></li>
+                                <?php endwhile; ?>
+                            </ul>
+                        </div>
                     <?php endif; ?>
 
-                    <footer class="entry-meta">
-                        <?php if ( comments_open() ) : ?>
-                            <div class="comments-link">
-                                <?php comments_popup_link( '<span class="leave-reply">' . __( 'Leave a reply', 'wpapps' ) . '</span>', __( '1 Reply', 'wpapps' ), __( '% Replies', 'wpapps' ) ); ?>
-                            </div><!-- .comments-link -->
-                        <?php endif; // comments_open() ?>
-                    </footer><!-- .entry-meta -->
                 </article><!-- #post -->
             <?php endwhile; // end of the loop. ?>
             <?php else: ?>
-            <h2>Not Found</h2>
+                <h2>Not Found</h2>
             <?php endif; ?>
+            <?php comments_template( '', true ); ?>
         </div><!-- #content -->
     </div><!-- #primary -->
 <?php

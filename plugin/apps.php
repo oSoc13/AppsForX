@@ -30,6 +30,10 @@
 
 defined('ABSPATH') || exit;
 
+/**
+ * Are you a developer?
+ * Make sure to check out the developer notes on the AppsForX GitHub Wiki!
+ */
 class WPApps {
     const WPAPPS_VERSION = '1.0';
 
